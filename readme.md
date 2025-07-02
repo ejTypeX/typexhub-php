@@ -61,9 +61,6 @@ Logout disponível em `/auth/logout.php`
 4. **Configurações:**
    - Conexão PDO reutilizável em `src/include/conexao.php`
 
-5. **Composer (futuramente):**
-   - Se quiser usar autoload, crie um `composer.json` e rode o Composer dentro do container
-
 ## Observações
 
 - O acesso direto a diretórios sem index está bloqueado (`Options -Indexes`).
