@@ -10,7 +10,7 @@ Este projeto é um ambiente PHP moderno, pronto para desenvolvimento web, com su
 - MySQL
 - phpMyAdmin
 - URLs amigáveis via .htaccess
-- Estrutura organizada (src/, auth/, config.php, conexao.php, etc)
+- Estrutura organizada (src/, auth/, conexao.php, etc)
 - Exemplo de login/logout com autenticação
 
 ## Estrutura de Pastas
@@ -23,13 +23,10 @@ Este projeto é um ambiente PHP moderno, pronto para desenvolvimento web, com su
 │   ├── index.php
 │   ├── config.php
 │   ├── conexao.php
-│   ├── route.php
-│   ├── home.php
-│   ├── .htaccess
 │   └── auth/
 │       ├── login.php
 │       ├── logout.php
-│       └── autentica.php
+│       └── autenticar.php
 └── ...
 ```
 
@@ -62,14 +59,12 @@ Este projeto é um ambiente PHP moderno, pronto para desenvolvimento web, com su
 Logout disponível em `/auth/logout.php`
 
 4. **Configurações:**
-   - Variáveis de banco e timezone estão em `src/config.php`
-   - Conexão PDO reutilizável em `src/conexao.php`
+   - Conexão PDO reutilizável em `src/include/conexao.php`
 
-5. **Composer (opcional):**
+5. **Composer (futuramente):**
    - Se quiser usar autoload, crie um `composer.json` e rode o Composer dentro do container
 
 ## Observações
 
-- O Apache está configurado para permitir `.htaccess` e reescrita de URLs.
 - O acesso direto a diretórios sem index está bloqueado (`Options -Indexes`).
 - O projeto é facilmente extensível para novas rotas e funcionalidades.

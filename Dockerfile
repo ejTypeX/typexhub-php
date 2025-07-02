@@ -1,9 +1,7 @@
-# Dockerfile
 FROM php:8.2-apache
 
 WORKDIR /var/www/html
 
-# Instala dependências necessárias para extensões PHP
 RUN apt-get update \
     && apt-get install -y libonig-dev libxml2-dev \
     && docker-php-ext-install pdo pdo_mysql mysqli mbstring xml \

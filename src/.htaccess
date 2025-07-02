@@ -1,7 +1,0 @@
-# Bloqueia acesso a pastas raízes
-
-RewriteEngine On
-Options -Indexes
-
-RewriteCond %{REQUEST_URI} ^/$
-RewriteRule ^$ - [F,L]

@@ -1,7 +1,11 @@
-# docker-compose.yml
 services:
   app:
     build: .
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_NAME: ${MYSQL_DATABASE}
+      DB_USER: ${MYSQL_USER}
+      DB_PASS: ${MYSQL_PASSWORD}
     container_name: typexhub
     depends_on:
       - db
@@ -11,26 +15,24 @@ services:
       - ./src:/var/www/html
     networks:
       - app-network
-
-  # Serviço do Banco de Dados (MySQL)
+    ### command:
   db:
     image: mysql:latest
     container_name: typexhub-db
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: 'typexutfpr'
-      MYSQL_DATABASE: 'typexhub'
-      MYSQL_USER: 'typexadmin'
-      MYSQL_PASSWORD: 'typexadmin'
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
       - db_data:/var/lib/mysql
     networks:
       - app-network
 
-  # Serviço do phpMyAdmin
   phpmyadmin:
     image: phpmyadmin:latest
-    container_name: meu_app_pma
+    container_name: phpmyadmin
     restart: unless-stopped
     depends_on:
       - db
