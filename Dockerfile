@@ -7,7 +7,7 @@ RUN apt-get update \
     && docker-php-ext-install pdo pdo_mysql mysqli mbstring xml \
     && apt-get clean
 
-RUN sed -i 's|<Directory /var/www/>|<Directory /var/www/html/>\n    AllowOverride All|g' /etc/apache2/apache2.conf
-RUN a2enmod rewrite
+RUN a2enmod rewrite \
+    && sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
 
 COPY ./src/ /var/www/html/
