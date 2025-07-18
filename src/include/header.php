@@ -21,8 +21,10 @@ $assets_path = obterAssetsPath();
     <link rel="stylesheet" href="<?php echo $assets_path; ?>css/vars.css">
     <link rel="stylesheet" href="<?php echo $assets_path; ?>css/reset.css">
     <link rel="stylesheet" href="<?php echo $assets_path; ?>css/header.css">
+    <link rel="stylesheet" href="<?php echo $assets_path; ?>css/sidebar.css">
     <link rel="stylesheet" href="<?php echo $assets_path; ?>css/global.css">
     <link rel="icon" href="<?php echo $assets_path; ?>images/tx-logo.ico" type="image/x-icon">
+    <script src="<?php echo $assets_path; ?>js/sidebar.js" defer></script>
 </head>
 <body>
     <header>
