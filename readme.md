@@ -2,7 +2,6 @@
 
 > Projeto PHP com Docker e MySQL
 
-
 ## 📄 Descrição
 
 Este projeto oferece um ambiente completo e moderno para desenvolvimento em PHP, com os seguintes recursos integrados:
@@ -15,7 +14,7 @@ Este projeto oferece um ambiente completo e moderno para desenvolvimento em PHP,
 
 ## 📁 Estrutura de Pastas
 
-```
+``` bash
 / (raiz)
 ├── docker-compose.yml
 ├── Dockerfile
@@ -32,7 +31,7 @@ Este projeto oferece um ambiente completo e moderno para desenvolvimento em PHP,
 
 ## ▶️ Como rodar o projeto
 
-#### ✅ Pré-requisitos
+### ✅ Pré-requisitos
 
 - Docker instalado
 - Docker Compose instalado
@@ -62,10 +61,56 @@ if (!isset($_SESSION['usuario'])) {
 
 Logout disponível em: `/auth/logout.php`
 
-## ⚙️ Configurações
+## ⚙️ Configurações e Banco de Dados
 
 - Conexão PDO reutilizável: `src/include/conexao.php`
 
+### 🗄️ Sistema de Migrations
+
+O projeto usa **migrations** para versionar o banco de dados:
+
+```bash
+# Aplicar todas as migrations pendentes
+php database/migrate.php
+
+# Verificar status das migrations
+php database/migrate.php status
+
+# Criar nova migration
+./dev-sync.sh nova
+```
+
+### 🔄 Workflow de Desenvolvimento (Híbrido)
+
+**Mais prático:** Desenvolva no phpMyAdmin + Migrations para versionamento
+
+1. **Desenvolva rapidamente no phpMyAdmin:**
+
+   - Acesse: [http://localhost:8081](http://localhost:8081)
+   - Crie tabelas, modifique estruturas
+   - Teste queries e dados
+
+2. **Capture mudanças automaticamente:**
+
+   ```bash
+   ./dev-sync.sh sync    # Extrai estrutura atual
+   ./dev-sync.sh nova    # Cria migration baseada nas mudanças
+   ```
+
+3. **Versione e compartilhe:**
+
+   ```bash
+   git add database/migrations/
+   git commit -m "feat: adiciona nova funcionalidade"
+   git push
+   ```
+
+4. **Equipe sincroniza:**
+
+   ```bash
+   git pull
+   php database/migrate.php  # Aplica mudanças automaticamente
+   ```
 
 ## 🛠️ Visão Geral do Processo de Desenvolvimento com Git
 
@@ -78,6 +123,7 @@ Este projeto utiliza uma estrutura de versionamento com Git baseada em branches.
 - **`homolog`** → Ambiente de testes e validação
 
 ### 🔄 mainclo de desenvolvimentomain
+
 1. **Criar uma branch para sua funcionalidade**  
    A partir da `develop`, crie umaain com nome descritivo:
 
@@ -86,6 +132,7 @@ Este projeto utiliza uma estrutura de versionamento com Git baseada em branches.
    git pull origin develop
    git checkout -b feature/login-google
    ```
+
    ---
 
 2. **Desenvolver sua funcionalidade**  
@@ -96,12 +143,13 @@ Este projeto utiliza uma estrutura de versionamento com Git baseada em branches.
    git commit -m "feat: implementa login com Google"
    git push origin feature/login-google
    ```
+
     ---
 
 3. **Abrir um Pull Request para a `develop`**  
    Após finalizar, crie um Pull Request da branch `feature/*` para `develop` (via GitHub ou GitLab).  
    O merge será feito após revisão e aprovação.
-   
+
    ---
 4. **Enviar para `homolog`**  
    Quando a `develop` estiver com múltiplas features testadas:
