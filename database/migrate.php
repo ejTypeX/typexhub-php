@@ -122,20 +122,17 @@ function executeMigration($pdo, $migrationName) {
     
     $sql = file_get_contents($migrationFile);
     
-    // Remove comentários SQL e linhas vazias para execução limpa
-    $statements = explode(';', $sql);
-    
     $pdo->beginTransaction();
     
     try {
+        // Divide o SQL em declarações individuais e executa cada uma
+        $statements = explode(';', $sql);
+        
         foreach ($statements as $statement) {
             $statement = trim($statement);
-            // Ignora comentários, linhas vazias e diretivas específicas do MySQL dump
-            if (!empty($statement) && 
-                !preg_match('/^--/', $statement) && 
-                !preg_match('/^\/\*!.*\*\/;?$/', $statement) &&
-                !preg_match('/^SET\s+@saved_cs_client/', $statement) &&
-                !preg_match('/^SET\s+character_set_client/', $statement)) {
+            
+            // Ignora linhas vazias e comentários
+            if (!empty($statement) && !preg_match('/^--/', $statement)) {
                 $pdo->exec($statement);
             }
         }
@@ -175,6 +172,11 @@ function runMigrations($pdo) {
     $available = getAvailableMigrations($pdo);
     $pending = $available; // Agora getAvailableMigrations já retorna apenas as pendentes
     
+    echo "Migrations disponíveis: " . count($pending) . "\n";
+    if (!empty($pending)) {
+        echo "Lista: " . implode(', ', $pending) . "\n";
+    }
+    
     if (empty($pending)) {
         echo "Todas as migrations ja foram executadas!\n";
         return;
@@ -190,6 +192,7 @@ function runMigrations($pdo) {
         } catch (Exception $e) {
             echo "Erro!\n";
             echo "Erro em $migration: " . $e->getMessage() . "\n";
+            echo "Detalhes: " . $e->getTraceAsString() . "\n";
             break;
         }
     }
