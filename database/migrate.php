@@ -6,17 +6,40 @@
  * - Aplicar migrations pendentes
  * - Verificar status das migrations
  * - Rollback de migrations (opcional)
+ * - Criar novas migrations
  * 
  * Uso:
- * php migrate.php           # Aplica todas as migrations pendentes
- * php migrate.php status    # Mostra status das migrations
- * php migrate.php rollback  # Desfaz a última migration
+ * php migrate.php                    # Aplica todas as migrations pendentes
+ * php migrate.php status             # Mostra status das migrations
+ * php migrate.php rollback           # Desfaz a última migration
+ * php migrate.php --create nome      # Cria uma nova migration
  */
 
 // Configurações do banco de dados
+$envPath = '.env';
+if (file_exists($envPath)) {
+    // INI_SCANNER_RAW preserva as aspas, se houver
+    $vars = parse_ini_file($envPath, false, INI_SCANNER_RAW);
+
+    foreach ($vars as $key => $value) {
+        // opcional: remover aspas simples/duplas
+        $value = trim($value, "'\"");
+
+        // coloca no ambiente
+        putenv("$key=$value");
+        $_ENV[$key]    = $value;
+        $_SERVER[$key] = $value;
+    }
+}
+
+// em qualquer outro ponto da sua aplicação
+$dbHost = getenv('DB_HOST');
+$dbName = getenv('DB_NAME');
+$dbUser = getenv('DB_USER');
+$dbPass = getenv('DB_PASSWORD');
 
 try {
-    $pdo = new PDO("mysql:host=$host;port=$port;dbname=$dbname;charset=utf8mb4", $username, $password);
+    $pdo = new PDO("mysql:host=$dbHost;port=3306;dbname=$dbName;charset=utf8mb4", $dbUser, $dbPass);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     echo "Conexao com banco estabelecida com sucesso!\n";
 } catch (PDOException $e) {
@@ -32,8 +55,9 @@ function createMigrationsTable($pdo) {
         CREATE TABLE IF NOT EXISTS migrations_controle (
             id INT AUTO_INCREMENT PRIMARY KEY,
             migration_name VARCHAR(255) NOT NULL UNIQUE,
-            executed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            executed_at TIMESTAMP DEFAULT NULL,
             batch_number INT NOT NULL,
+            executed TINYINT(1) DEFAULT 0,
             INDEX idx_migration_name (migration_name),
             INDEX idx_batch (batch_number)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
@@ -46,24 +70,36 @@ function createMigrationsTable($pdo) {
  * Obtém todas as migrations executadas
  */
 function getExecutedMigrations($pdo) {
-    $stmt = $pdo->query("SELECT migration_name FROM migrations_controle ORDER BY id");
+    $stmt = $pdo->query("SELECT migration_name FROM migrations_controle WHERE executed = 1 ORDER BY id");
     return $stmt->fetchAll(PDO::FETCH_COLUMN);
 }
 
 /**
- * Obtém todas as migrations disponíveis no diretório
+ * Obtém todas as migrations disponíveis para execução
+ * Verifica quais migrations do diretório ainda não foram executadas no banco
  */
-function getAvailableMigrations() {
+function getAvailableMigrations($pdo) {
+    // Garante que a tabela de controle existe
+    createMigrationsTable($pdo);
+    
+    // Obtém todas as migrations do diretório
     $migrationsDir = __DIR__ . '/migrations/';
     $files = glob($migrationsDir . '*.sql');
-    $migrations = [];
+    $allMigrations = [];
     
     foreach ($files as $file) {
-        $migrations[] = basename($file, '.sql');
+        $allMigrations[] = basename($file, '.sql');
     }
     
-    sort($migrations);
-    return $migrations;
+    sort($allMigrations);
+    
+    // Obtém as migrations já executadas no banco
+    $executedMigrations = getExecutedMigrations($pdo);
+    
+    // Retorna apenas as migrations que ainda não foram executadas
+    $availableMigrations = array_diff($allMigrations, $executedMigrations);
+    
+    return array_values($availableMigrations); // Reindexa o array
 }
 
 /**
@@ -94,15 +130,33 @@ function executeMigration($pdo, $migrationName) {
     try {
         foreach ($statements as $statement) {
             $statement = trim($statement);
-            if (!empty($statement) && !preg_match('/^--/', $statement)) {
+            // Ignora comentários, linhas vazias e diretivas específicas do MySQL dump
+            if (!empty($statement) && 
+                !preg_match('/^--/', $statement) && 
+                !preg_match('/^\/\*!.*\*\/;?$/', $statement) &&
+                !preg_match('/^SET\s+@saved_cs_client/', $statement) &&
+                !preg_match('/^SET\s+character_set_client/', $statement)) {
                 $pdo->exec($statement);
             }
         }
         
         // Registra a migration como executada
         $batchNumber = getNextBatchNumber($pdo);
-        $stmt = $pdo->prepare("INSERT INTO migrations_controle (migration_name, batch_number) VALUES (?, ?)");
-        $stmt->execute([$migrationName, $batchNumber]);
+        
+        // Verifica se já existe um registro para esta migration
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM migrations_controle WHERE migration_name = ?");
+        $stmt->execute([$migrationName]);
+        $exists = $stmt->fetchColumn() > 0;
+        
+        if ($exists) {
+            // Atualiza o registro existente
+            $stmt = $pdo->prepare("UPDATE migrations_controle SET executed = 1, executed_at = CURRENT_TIMESTAMP WHERE migration_name = ?");
+            $stmt->execute([$migrationName]);
+        } else {
+            // Insere novo registro
+            $stmt = $pdo->prepare("INSERT INTO migrations_controle (migration_name, batch_number, executed, executed_at) VALUES (?, ?, 1, CURRENT_TIMESTAMP)");
+            $stmt->execute([$migrationName, $batchNumber]);
+        }
         
         $pdo->commit();
         return true;
@@ -118,9 +172,8 @@ function executeMigration($pdo, $migrationName) {
 function runMigrations($pdo) {
     createMigrationsTable($pdo);
     
-    $executed = getExecutedMigrations($pdo);
-    $available = getAvailableMigrations();
-    $pending = array_diff($available, $executed);
+    $available = getAvailableMigrations($pdo);
+    $pending = $available; // Agora getAvailableMigrations já retorna apenas as pendentes
     
     if (empty($pending)) {
         echo "Todas as migrations ja foram executadas!\n";
@@ -151,11 +204,55 @@ function showStatus($pdo) {
     createMigrationsTable($pdo);
     
     $executed = getExecutedMigrations($pdo);
-    $available = getAvailableMigrations();
-    $pending = array_diff($available, $executed);
+    
+    // Obtém todas as migrations do diretório
+    $migrationsDir = __DIR__ . '/migrations/';
+    $files = glob($migrationsDir . '*.sql');
+    $allMigrationsFromDir = [];
+    
+    foreach ($files as $file) {
+        $allMigrationsFromDir[] = basename($file, '.sql');
+    }
+    sort($allMigrationsFromDir);
+    
+    // Calcula as migrations pendentes
+    $pending = array_diff($allMigrationsFromDir, $executed);
+    
+    // Verifica migrations pendentes sem registro no banco e insere automaticamente
+    $insertedMigrations = [];
+    if (!empty($pending)) {
+        $batchNumber = getNextBatchNumber($pdo);
+        
+        foreach ($pending as $migration) {
+            // Verifica se a migration já tem registro no banco
+            $stmt = $pdo->prepare("SELECT COUNT(*) FROM migrations_controle WHERE migration_name = ?");
+            $stmt->execute([$migration]);
+            $exists = $stmt->fetchColumn() > 0;
+            
+            if (!$exists) {
+                // Insere o registro da migration pendente
+                try {
+                    $stmt = $pdo->prepare("INSERT INTO migrations_controle (migration_name, batch_number, executed) VALUES (?, ?, 0)");
+                    $stmt->execute([$migration, $batchNumber]);
+                    $insertedMigrations[] = $migration;
+                } catch (Exception $e) {
+                    echo "⚠️  Aviso: Não foi possível registrar migration '$migration': " . $e->getMessage() . "\n";
+                }
+            }
+        }
+    }
     
     echo "STATUS DAS MIGRATIONS\n";
     echo "========================\n\n";
+    
+    // Mostra migrations recém-registradas
+    if (!empty($insertedMigrations)) {
+        echo "🆕 Migrations registradas automaticamente (" . count($insertedMigrations) . "):\n";
+        foreach ($insertedMigrations as $migration) {
+            echo "   - $migration\n";
+        }
+        echo "\n";
+    }
     
     echo "Executadas (" . count($executed) . "):\n";
     foreach ($executed as $migration) {
@@ -200,8 +297,79 @@ function rollbackLastMigration($pdo) {
     echo "Para desfazer, voce deve criar manualmente uma nova migration com as alteracoes reversas.\n";
 }
 
+/**
+ * Cria uma nova migration
+ */
+function createMigration($pdo, $migrationName) {
+    // Garante que a tabela de controle existe
+    createMigrationsTable($pdo);
+    
+    // Valida o nome da migration
+    if (empty($migrationName)) {
+        echo "Erro: Nome da migration é obrigatório!\n";
+        echo "Uso: php migrate.php --create nome_da_migration\n";
+        return false;
+    }
+    
+    // Remove caracteres especiais e espaços do nome
+    $migrationName = preg_replace('/[^a-zA-Z0-9_]/', '_', $migrationName);
+    $migrationName = preg_replace('/_+/', '_', $migrationName);
+    $migrationName = trim($migrationName, '_');
+    
+    // Gera o próximo número de migration
+    $migrationsDir = __DIR__ . '/migrations/';
+    $files = glob($migrationsDir . '*.sql');
+    $maxNumber = 0;
+    
+    foreach ($files as $file) {
+        $filename = basename($file, '.sql');
+        if (preg_match('/^(\d+)_/', $filename, $matches)) {
+            $number = (int)$matches[1];
+            if ($number > $maxNumber) {
+                $maxNumber = $number;
+            }
+        }
+    }
+    
+    $nextNumber = $maxNumber + 1;
+    $migrationFileName = sprintf('%03d_%s.sql', $nextNumber, $migrationName);
+    $migrationFilePath = $migrationsDir . $migrationFileName;
+    
+    // Verifica se o arquivo já existe
+    if (file_exists($migrationFilePath)) {
+        echo "Erro: Migration '$migrationFileName' já existe!\n";
+        return false;
+    }
+    
+    // Cria o conteúdo do arquivo de migration
+    $migrationContent = "-- ==================== MIGRATION {$nextNumber}: " . strtoupper($migrationName) . " ====================\n";
+    $migrationContent .= "-- Data: " . date('Y-m-d H:i:s') . "\n";
+    $migrationContent .= "-- Autor: " . (getenv('USER') ?: 'sistema') . "\n";
+    $migrationContent .= "-- Descrição: " . ucfirst(str_replace('_', ' ', $migrationName)) . "\n\n";
+    
+    // Cria o arquivo
+    if (file_put_contents($migrationFilePath, $migrationContent)) {
+        echo "✅ Migration criada com sucesso!\n";
+        echo "📁 Arquivo: $migrationFilePath\n";
+        echo "📝 Edite o arquivo e execute 'php migrate.php run' para aplicar\n";
+        
+        // NÃO registra a migration no banco - ela deve ficar pendente até ser executada
+        echo "📊 Migration criada e pronta para execução\n";
+
+        $batchNumber = getNextBatchNumber($pdo);
+        $stmt = $pdo->prepare("INSERT INTO migrations_controle (migration_name, batch_number) VALUES (?, ?)");
+        $stmt->execute([$migrationName, $batchNumber]);
+
+        return true;
+    } else {
+        echo "❌ Erro ao criar o arquivo de migration!\n";
+        return false;
+    }
+}
+
 // Processamento dos argumentos da linha de comando
 $command = isset($argv[1]) ? $argv[1] : 'run';
+$migrationName = isset($argv[2]) ? $argv[2] : '';
 
 switch ($command) {
     case 'status':
@@ -212,6 +380,9 @@ switch ($command) {
         rollbackLastMigration($pdo);
         break;
         
+    case 'create':
+        createMigration($pdo, $migrationName);
+        break;
     case 'run':
     default:
         runMigrations($pdo);
