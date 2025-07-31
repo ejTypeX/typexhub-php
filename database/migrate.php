@@ -32,6 +32,55 @@ if (file_exists($envPath)) {
     }
 }
 
+/**
+ * Tenta descobrir o Git user.name configurado, seja por comando ou
+ * lendo .git/config ou ~/.gitconfig. Se nada for encontrado,
+ * retorna o usuário do sistema (get_current_user()).
+ *
+ * @return string
+ */
+function getGitUsername(): string
+{
+    // 1) Tentar via comando shell (se shell_exec estiver habilitado)
+    if (function_exists('shell_exec')) {
+        $name = trim(@shell_exec('git config --get user.name 2>/dev/null'));
+        if ($name !== '') {
+            return $name;
+        }
+    }
+
+    // 2) Procurar em arquivos de config: local e global
+    $configFiles = [
+        __DIR__ . '/.git/config',           // config do repositório
+        getenv('HOME') . '/.gitconfig',     // config global do usuário
+    ];
+    foreach ($configFiles as $file) {
+        if (file_exists($file) && is_readable($file)) {
+            $lines     = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            $inUserSec = false;
+            foreach ($lines as $line) {
+                $line = trim($line);
+                // Entramos na seção [user]
+                if (preg_match('/^\[user\]/i', $line)) {
+                    $inUserSec = true;
+                    continue;
+                }
+                // Se chegamos em outra seção, saímos
+                if ($inUserSec && preg_match('/^\[.+\]/', $line)) {
+                    break;
+                }
+                // Dentro de [user], buscar “name = ...”
+                if ($inUserSec && preg_match('/^name\s*=\s*(.+)$/i', $line, $m)) {
+                    return trim($m[1]);
+                }
+            }
+        }
+    }
+
+    // 3) Fallback: usuário do sistema de arquivos
+    return get_current_user();
+}
+
 // em qualquer outro ponto da sua aplicação
 $dbHost = getenv('DB_HOST');
 $dbName = getenv('DB_NAME');
@@ -168,6 +217,7 @@ function executeMigration($pdo, $migrationName) {
  */
 function runMigrations($pdo) {
     createMigrationsTable($pdo);
+    showStatus($pdo);
     
     $available = getAvailableMigrations($pdo);
     $pending = $available; // Agora getAvailableMigrations já retorna apenas as pendentes
@@ -275,32 +325,6 @@ function showStatus($pdo) {
 }
 
 /**
- * Desfaz a última migration (rollback)
- */
-function rollbackLastMigration($pdo) {
-    createMigrationsTable($pdo);
-    
-    $stmt = $pdo->query("
-        SELECT migration_name, batch_number 
-        FROM migrations_controle 
-        ORDER BY id DESC 
-        LIMIT 1
-    ");
-    
-    $lastMigration = $stmt->fetch(PDO::FETCH_ASSOC);
-    
-    if (!$lastMigration) {
-        echo "Nenhuma migration para desfazer!\n";
-        return;
-    }
-    
-    $migrationName = $lastMigration['migration_name'];
-    echo "ATENCAO: Rollback automatico nao implementado.\n";
-    echo "Ultima migration executada: $migrationName\n";
-    echo "Para desfazer, voce deve criar manualmente uma nova migration com as alteracoes reversas.\n";
-}
-
-/**
  * Cria uma nova migration
  */
 function createMigration($pdo, $migrationName) {
@@ -347,7 +371,7 @@ function createMigration($pdo, $migrationName) {
     // Cria o conteúdo do arquivo de migration
     $migrationContent = "-- ==================== MIGRATION {$nextNumber}: " . strtoupper($migrationName) . " ====================\n";
     $migrationContent .= "-- Data: " . date('Y-m-d H:i:s') . "\n";
-    $migrationContent .= "-- Autor: " . (getenv('USER') ?: 'sistema') . "\n";
+    $migrationContent .= "-- Autor: " . (getGitUsername() ?: 'sistema') . "\n";
     $migrationContent .= "-- Descrição: " . ucfirst(str_replace('_', ' ', $migrationName)) . "\n\n";
     
     // Cria o arquivo
@@ -356,12 +380,15 @@ function createMigration($pdo, $migrationName) {
         echo "📁 Arquivo: $migrationFilePath\n";
         echo "📝 Edite o arquivo e execute 'php migrate.php run' para aplicar\n";
         
-        // NÃO registra a migration no banco - ela deve ficar pendente até ser executada
-        echo "📊 Migration criada e pronta para execução\n";
-
+        // Registra a migration no banco como pendente (igual ao showStatus)
         $batchNumber = getNextBatchNumber($pdo);
-        $stmt = $pdo->prepare("INSERT INTO migrations_controle (migration_name, batch_number) VALUES (?, ?)");
-        $stmt->execute([$migrationName, $batchNumber]);
+        try {
+            $stmt = $pdo->prepare("INSERT INTO migrations_controle (migration_name, batch_number, executed) VALUES (?, ?, 0)");
+            $stmt->execute([basename($migrationFileName, '.sql'), $batchNumber]);
+            echo "📊 Migration registrada no banco como pendente\n";
+        } catch (Exception $e) {
+            echo "⚠️  Aviso: Não foi possível registrar migration no banco: " . $e->getMessage() . "\n";
+        }
 
         return true;
     } else {
@@ -377,10 +404,6 @@ $migrationName = isset($argv[2]) ? $argv[2] : '';
 switch ($command) {
     case 'status':
         showStatus($pdo);
-        break;
-        
-    case 'rollback':
-        rollbackLastMigration($pdo);
         break;
         
     case 'create':
