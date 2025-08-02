@@ -9,10 +9,10 @@
  * - Criar novos seeders
  * 
  * Uso:
- * php seeder.php                    # Aplica todos os seeders pendentes
- * php seeder.php status             # Mostra status dos seeders
- * php seeder.php rollback           # Desfaz o último seeder
- * php seeder.php --create nome      # Cria um novo seeder
+ * docker exec -it typexhub php database/seeder.php                    # Aplica todos os seeders pendentes
+ * docker exec -it typexhub php database/seeder.php status             # Mostra status dos seeders
+ * docker exec -it typexhub php database/seeder.php rollback           # Desfaz o último seeder
+ * docker exec -it typexhub php database/seeder.php --create nome      # Cria um novo seeder
  */
 
 // Configurações do banco de dados

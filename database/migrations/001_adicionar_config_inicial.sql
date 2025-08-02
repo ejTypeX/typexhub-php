@@ -3,8 +3,6 @@
 -- Autor: vitorferreira
 -- Descrição: Adicionar configuração inicial do sistema
 
--- 📄 Mudanças detectadas automaticamente:
-
 -- 1. Primeiro criar a tabela diretorias (independente)
 CREATE TABLE `diretorias` (
   `diretoria_id` int NOT NULL AUTO_INCREMENT,
@@ -84,9 +82,19 @@ CREATE TABLE `tasks` (
   CONSTRAINT `tasks_fk_usuario` FOREIGN KEY (`tasks_atribuido_para`) REFERENCES `usuarios` (`usuario_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- ⚠️  ATENÇÃO: Migration gerada automaticamente!
--- ✏️  Revise e edite conforme necessário antes de aplicar
--- 🔍 Verifique o arquivo temp_diferencas.txt para mais detalhes
+-- 6. Criar tabela configuracoes se não existir
+CREATE TABLE IF NOT EXISTS `configuracoes` (
+  `config_id` int NOT NULL AUTO_INCREMENT,
+  `chave` varchar(100) NOT NULL,
+  `valor` text NOT NULL,
+  `descricao` text,
+  `criado_em` timestamp DEFAULT CURRENT_TIMESTAMP,
+  `atualizado_em` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`config_id`),
+  UNIQUE KEY `chave` (`chave`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Atualiza versão do banco
-UPDATE configuracoes SET valor = '001' WHERE chave = 'versao_db';
+-- 7. Inserir configuração inicial ou atualizar se existir
+INSERT INTO configuracoes (chave, valor, descricao) 
+VALUES ('versao_db', '001', 'Versão atual do banco de dados')
+ON DUPLICATE KEY UPDATE valor = '001', atualizado_em = CURRENT_TIMESTAMP;

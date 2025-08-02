@@ -8,23 +8,25 @@ services:
       - "8080:80"
     volumes:
       - ./src:/var/www/html
+      - ./database:/var/www/html/database
+      - ./.env:/var/www/html/.env
     networks:
       - app-network
     environment:
-      DB_HOST: ${DB_HOST}
+      DB_HOST: db                    # ✅ Use o nome do serviço diretamente
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
       DB_PASS: ${DB_PASSWORD}
-    ### command:
+
   db:
     image: mysql:latest
     container_name: typexhub-db
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
-      MYSQL_HOST: ${DB_HOST}
+      # ❌ Removido MYSQL_HOST (não é variável válida do MySQL)
       MYSQL_DATABASE: ${DB_NAME}
-      MYSQL_USER: ${DB_USER}
+      MYSQL_USER: ${DB_USER}         # ✅ Certifique-se que DB_USER ≠ "root"
       MYSQL_PASSWORD: ${DB_PASSWORD}
     volumes:
       - db_data:/var/lib/mysql
@@ -40,8 +42,7 @@ services:
     ports:
       - "8081:80"
     environment:
-      #PMA_HOST: host.docker.internal
-      PMA_HOST: db
+      PMA_HOST: db                   # ✅ Correto
       PMA_PORT: 3306
     networks:
       - app-network

@@ -7,10 +7,11 @@
  * - Verificar status das migrations
  * - Rollback de migrations (opcional)
  * - Criar novas migrations
+ * - Deve ser executado dentro do container
  * 
  * Uso:
- * php migrate.php                    # Aplica todas as migrations pendentes
- * php migrate.php status             # Mostra status das migrations
+ * docker exec -it typexhub php database/migrate.php                    # Aplica todas as migrations pendentes
+ * docker exec -it typexhub php database/migrate.php status             # Mostra status das migrations
  * php migrate.php rollback           # Desfaz a última migration
  * php migrate.php --create nome      # Cria uma nova migration
  */
