@@ -3,8 +3,7 @@
 -- Autor: vitorferreira
 -- Descrição: Adicionar configuração inicial do sistema
 
--- 📄 Mudanças detectadas automaticamente:
-
+-- 1. Primeiro criar a tabela diretorias (independente)
 CREATE TABLE `diretorias` (
   `diretoria_id` int NOT NULL AUTO_INCREMENT,
   `diretoria_nome` varchar(150) NOT NULL,
@@ -14,15 +13,26 @@ CREATE TABLE `diretorias` (
   PRIMARY KEY (`diretoria_id`),
   UNIQUE KEY `diretoria_nome` (`diretoria_nome`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `logs_sistema`
---
+-- 2. Depois criar a tabela usuarios (depende de diretorias)
+CREATE TABLE `usuarios` (
+  `usuario_id` int NOT NULL AUTO_INCREMENT,
+  `usuario_nome` varchar(100) NOT NULL,
+  `usuario_sobrenome` varchar(100) NOT NULL,
+  `usuario_email` varchar(150) NOT NULL,
+  `usuario_senha` varchar(150) NOT NULL,
+  `usuario_rg` varchar(100) NOT NULL,
+  `usuario_cpf` varchar(100) NOT NULL,
+  `usuario_telefone` varchar(100) NOT NULL,
+  `usuario_nascimento` date NOT NULL,
+  `usuario_cargo` varchar(100) NOT NULL,
+  `diretoria_id` int NOT NULL,
+  PRIMARY KEY (`usuario_id`),
+  KEY `diretoria_id` (`diretoria_id`),
+  CONSTRAINT `usuarios_ibfk_1` FOREIGN KEY (`diretoria_id`) REFERENCES `diretorias` (`diretoria_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-DROP TABLE IF EXISTS `logs_sistema`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+-- 3. Depois criar a tabela logs_sistema (depende de usuarios)
 CREATE TABLE `logs_sistema` (
   `log_id` int NOT NULL AUTO_INCREMENT,
   `log_usuario` int NOT NULL,
@@ -33,15 +43,8 @@ CREATE TABLE `logs_sistema` (
   KEY `logs_fk_usuario` (`log_usuario`),
   CONSTRAINT `logs_fk_usuario` FOREIGN KEY (`log_usuario`) REFERENCES `usuarios` (`usuario_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `projetos`
---
-
-DROP TABLE IF EXISTS `projetos`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+-- 4. Depois criar a tabela projetos (depende de usuarios e diretorias)
 CREATE TABLE `projetos` (
   `projeto_id` int NOT NULL AUTO_INCREMENT,
   `projeto_nome` varchar(255) NOT NULL,
@@ -57,12 +60,8 @@ CREATE TABLE `projetos` (
   CONSTRAINT `projetos_ibfk_1` FOREIGN KEY (`projeto_responsavel`) REFERENCES `usuarios` (`usuario_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `projetos_ibfk_2` FOREIGN KEY (`projeto_diretoria`) REFERENCES `diretorias` (`diretoria_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `tasks`
---
-
+-- 5. Por último criar a tabela tasks (depende de usuarios, diretorias e projetos)
 CREATE TABLE `tasks` (
   `tasks_id` int NOT NULL AUTO_INCREMENT,
   `tasks_titulo` varchar(255) NOT NULL,
@@ -82,33 +81,20 @@ CREATE TABLE `tasks` (
   CONSTRAINT `tasks_fk_projeto` FOREIGN KEY (`tasks_projeto`) REFERENCES `projetos` (`projeto_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `tasks_fk_usuario` FOREIGN KEY (`tasks_atribuido_para`) REFERENCES `usuarios` (`usuario_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
-CREATE TABLE `usuarios` (
-  `usuario_id` int NOT NULL AUTO_INCREMENT,
-  `usuario_nome` varchar(100) NOT NULL,
-  `usuario_sobrenome` varchar(100) NOT NULL,
-  `usuario_email` varchar(150) NOT NULL,
-  `usuario_senha` varchar(150) NOT NULL,
-  `usuario_rg` varchar(100) NOT NULL,
-  `usuario_cpf` varchar(100) NOT NULL,
-  `usuario_telefone` varchar(100) NOT NULL,
-  `usuario_nascimento` date NOT NULL,
-  `usuario_cargo` varchar(100) NOT NULL,
-  `diretoria_id` int NOT NULL,
-  PRIMARY KEY (`usuario_id`),
-  KEY `diretoria_id` (`diretoria_id`),
-  CONSTRAINT `usuarios_ibfk_1` FOREIGN KEY (`diretoria_id`) REFERENCES `diretorias` (`diretoria_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+-- 6. Criar tabela configuracoes se não existir
+CREATE TABLE IF NOT EXISTS `configuracoes` (
+  `config_id` int NOT NULL AUTO_INCREMENT,
+  `chave` varchar(100) NOT NULL,
+  `valor` text NOT NULL,
+  `descricao` text,
+  `criado_em` timestamp DEFAULT CURRENT_TIMESTAMP,
+  `atualizado_em` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`config_id`),
+  UNIQUE KEY `chave` (`chave`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Dumping routines for database 'typexhub'
---
-
--- ⚠️  ATENÇÃO: Migration gerada automaticamente!
--- ✏️  Revise e edite conforme necessário antes de aplicar
--- 🔍 Verifique o arquivo temp_diferencas.txt para mais detalhes
-
--- Atualiza versão do banco
-UPDATE configuracoes SET valor = '001' WHERE chave = 'versao_db';
+-- 7. Inserir configuração inicial ou atualizar se existir
+INSERT INTO configuracoes (chave, valor, descricao) 
+VALUES ('versao_db', '001', 'Versão atual do banco de dados')
+ON DUPLICATE KEY UPDATE valor = '001', atualizado_em = CURRENT_TIMESTAMP;

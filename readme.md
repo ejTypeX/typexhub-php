@@ -71,10 +71,10 @@ O projeto usa **migrations** para versionar o banco de dados:
 
 ```bash
 # Aplicar todas as migrations pendentes
-php database/migrate.php
+docker exec -it typexhub php database/migrate.php
 
 # Verificar status das migrations
-php database/migrate.php status
+docker exec -it typexhub php database/migrate.php status
 
 # Criar nova migration
 ./dev-sync.sh nova
