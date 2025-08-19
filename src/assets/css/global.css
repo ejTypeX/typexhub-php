@@ -1,4 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+/* Seção principal - mantida igual */
 #section_avisos_presidencia {
     display: flex;
     flex-direction: column;
@@ -24,7 +26,7 @@
 
 .container {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
     gap: 40px;
     padding: 20px 0;
     width: 100%;
@@ -42,32 +44,34 @@
     margin: 0 0 2vh 0;
 }
 
+/* CARD - Estrutura principal com flexbox */
 .card {
     display: flex;
     flex-direction: column;
     background: #454545;
     border: 1px solid #E6E6E6;
     border-radius: 12px;
-    height: 31vh;
-    width: 37vw;
+    max-width: 700px;
+    min-height: 250px;
+    width: 100%;
     padding: 24px;
     gap: 16px;
+    position: relative; /* Mantém para elementos que precisam */
 }
 
-        
+/* Status button - agora com flexbox no topo */
 .card .status-button {
-    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 149px;
     height: 31px;
-    left: 33px;
-    top: 32px;
     background: #D33232;
     box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
     border-radius: 100px;
     border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    align-self: flex-start; /* Alinha no início */
+    flex-shrink: 0;
 }
 
 .card .status-text {
@@ -79,66 +83,47 @@
     color: #FFFFFF;
 }
 
+/* Título - agora flexível */
 .card .project-title {
-    position: absolute;
-    width: 254px;
-    height: 40px;
-    left: 32px;
-    top: 76px;
     font-family: 'Inter';
     font-style: normal;
     font-weight: 500;
     font-size: 24px;
     line-height: 150%;
     color: #FFFFFF;
+    margin: 8px 0 0 0;
+    flex-shrink: 0;
 }
 
+/* Descrição - agora flexível e expandível */
 .card .project-description {
-    position: absolute;
-    width: 502px;
-    height: 24px;
-    left: 32px;
-    top: 134px;
     font-family: 'Inter';
     font-style: normal;
     font-weight: 500;
     font-size: 16px;
     line-height: 150%;
     color: #C9C9C9;
+    margin: 8px 0 auto 0;
+    flex-grow: 1; /* Expande para ocupar espaço disponível */
 }
 
-.card .action-button {
-    position: absolute;
-    width: 44px;
-    height: 41px;
-    right: 25px;
-    bottom: 20px;
-    background: #00ADB4;
-    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
-    border-radius: 8px;
+/* Divider - agora usando flexbox */
+.card .divider {
+    width: 100%;
+    height: 1px;
     border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background: #757575;
+    margin: 16px 0 8px 0;
+    flex-shrink: 0;
 }
 
-.card .action-icon {
-    width: 20px;
-    height: 20px;
-    background: #FFFFFF;
-}
-
+/* Footer section - container flex */
 .card .avatar-section {
     display: flex;
-    flex-direction: row;
     align-items: center;
-    padding: 0px;
     gap: 16px;
-    position: absolute;
-    width: 208px;
-    height: 50px;
-    left: 24px;
-    bottom: 20px;
+    width: 100%;
+    flex-shrink: 0;
 }
 
 .card .avatar {
@@ -146,17 +131,14 @@
     height: 45px;
     background: #D9D9D9;
     border-radius: 50%;
-    flex: none;
+    flex-shrink: 0;
 }
 
 .card .user-info {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
     gap: 2px;
-    width: 147px;
-    height: 50px;
-    flex: none;
+    flex-grow: 1;
 }
 
 .card .user-name {
@@ -166,6 +148,7 @@
     font-size: 16px;
     line-height: 150%;
     color: #FFFFFF;
+    margin: 0;
 }
 
 .card .user-role {
@@ -175,112 +158,135 @@
     font-size: 16px;
     line-height: 150%;
     color: #C9C9C9;
+    margin: 0;
 }
 
-.card .divider {
+/* Action button - posicionado no canto */
+.card .action-button {
     position: absolute;
-    width: 100%;
-    height: 1px;
-    left: 0px;
-    top: 65%;
-    border-top: 1px solid #757575;
+    width: 44px;
+    height: 41px;
+    right: 24px;
+    bottom: 24px;
+    background: #00ADB4;
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
 }
 
+.card .action-icon {
+    width: 20px;
+    height: 20px;
+    background: #FFFFFF;
+}
+
+/* Edit icon - removido posicionamento absoluto desnecessário */
 .card .edit-icon {
-    position: absolute;
     width: 30px;
     height: 30px;
-    left: 32px;
-    bottom: 5px;
 }
 
+/* Botão ver mais - mantido igual */
 .button_vermais {
     align-self: center;
     margin: 8px 0;
-    /* Button */
-
     background: #00ADB4;
-    /* Button Shadow */
     box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
     border-radius: 8px;
-    /* Ver mais */
-
     font-family: 'Inter';
     font-style: normal;
     font-weight: 700;
     font-size: 16px;
     line-height: 150%;
-    /* identical to box height, or 24px */
     display: flex;
     align-items: center;
     padding: 2vh 2vw;
-
     color: #FFFFFF;
+    border: none;
+    cursor: pointer;
 }
 
-/* Responsividade básica */
+/* Responsividade melhorada */
 @media (max-width: 768px) {
-   .container {
-       grid-template-columns: 1fr;
-       gap: 20px;
-   }
-   
-   .card {
-       width: 85vw;
-       height: 40vh;
-   }
-   
-   .section {
-       padding: 2vh 3vw;
-       margin: 0 2%;
-       width: 96%;
-   }
-   
-   .section h1 {
-       font-size: 28px;
-       line-height: 36px;
-   }
-   
-   .button_vermais {
-       padding: 1.5vh 4vw;
-       font-size: 14px;
-   }
+    .container {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .card {
+        width: 100%;
+        max-width: none;
+        min-height: 280px;
+    }
+    
+    .section {
+        padding: 2vh 3vw;
+        margin: 0 2%;
+        width: 96%;
+    }
+    
+    .section h1 {
+        font-size: 28px;
+        line-height: 36px;
+    }
+    
+    .button_vermais {
+        padding: 1.5vh 4vw;
+        font-size: 14px;
+    }
 }
 
 @media (max-width: 480px) {
-   #section_avisos_presidencia {
-       margin: 2%;
-       width: 96%;
-       gap: 3vh;
-   }
-   
-   .card {
-       width: 90vw;
-       height: 35vh;
-   }
-   
-   .section h1 {
-       font-size: 24px;
-       line-height: 32px;
-   }
-   
-   .card .project-title {
-       font-size: 20px;
-       width: 220px;
-   }
-   
-   .card .project-description {
-       font-size: 14px;
-       width: 280px;
-   }
-   
-   .card .user-name,
-   .card .user-role {
-       font-size: 14px;
-   }
-   
-   .button_vermais {
-       padding: 1vh 3vw;
-       font-size: 14px;
-   }
+    #section_avisos_presidencia {
+        margin: 2%;
+        width: 96%;
+        gap: 3vh;
+    }
+    
+    .container {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .card {
+        width: 100%;
+        min-height: 260px;
+        padding: 20px;
+    }
+    
+    .section h1 {
+        font-size: 24px;
+        line-height: 32px;
+    }
+    
+    .card .project-title {
+        font-size: 20px;
+    }
+    
+    .card .project-description {
+        font-size: 14px;
+    }
+    
+    .card .user-name,
+    .card .user-role {
+        font-size: 14px;
+    }
+    
+    .card .status-button {
+        width: 120px;
+        height: 28px;
+    }
+    
+    .card .status-text {
+        font-size: 14px;
+    }
+    
+    .button_vermais {
+        padding: 1vh 3vw;
+        font-size: 14px;
+    }
 }
