@@ -1,6 +1,5 @@
 <?php 
 include "../../include/header.php";
-include "../../include/sidebar.php";
 ?>
 
 <section id="section_avisos_presidencia">
