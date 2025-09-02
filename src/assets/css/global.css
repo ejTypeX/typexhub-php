@@ -1,0 +1,292 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+/* Seção principal - mantida igual */
+#section_avisos_presidencia {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 5%;
+    background-color: greenyellow;
+    width: 90%;
+    height: 90%;
+    gap: 5vh;
+}
+
+.section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 3vh 5vw;
+    margin: 0 5%;
+    width: 90%;
+    background-color: var(--bg-container-color);
+    border-radius: 12px;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 40px;
+    padding: 20px 0;
+    width: 100%;
+    justify-items: center;
+}
+
+.section h1 {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 36px;
+    line-height: 44px;
+    letter-spacing: -0.02em;
+    color: #FFFFFF;
+    margin: 0 0 2vh 0;
+}
+
+/* CARD - Estrutura principal com flexbox */
+.card {
+    display: flex;
+    flex-direction: column;
+    background: #454545;
+    border: 1px solid #E6E6E6;
+    border-radius: 12px;
+    max-width: 700px;
+    min-height: 250px;
+    width: 100%;
+    padding: 24px;
+    gap: 16px;
+    position: relative; /* Mantém para elementos que precisam */
+}
+
+/* Status button - agora com flexbox no topo */
+.card .status-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 149px;
+    height: 31px;
+    background: #D33232;
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
+    border-radius: 100px;
+    border: none;
+    align-self: flex-start; /* Alinha no início */
+    flex-shrink: 0;
+}
+
+.card .status-text {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 150%;
+    color: #FFFFFF;
+}
+
+/* Título - agora flexível */
+.card .project-title {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 150%;
+    color: #FFFFFF;
+    margin: 8px 0 0 0;
+    flex-shrink: 0;
+}
+
+/* Descrição - agora flexível e expandível */
+.card .project-description {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 150%;
+    color: #C9C9C9;
+    margin: 8px 0 auto 0;
+    flex-grow: 1; /* Expande para ocupar espaço disponível */
+}
+
+/* Divider - agora usando flexbox */
+.card .divider {
+    width: 100%;
+    height: 1px;
+    border: none;
+    background: #757575;
+    margin: 16px 0 8px 0;
+    flex-shrink: 0;
+}
+
+/* Footer section - container flex */
+.card .avatar-section {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    flex-shrink: 0;
+}
+
+.card .avatar {
+    width: 45px;
+    height: 45px;
+    background: #D9D9D9;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.card .user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex-grow: 1;
+}
+
+.card .user-name {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 150%;
+    color: #FFFFFF;
+    margin: 0;
+}
+
+.card .user-role {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 150%;
+    color: #C9C9C9;
+    margin: 0;
+}
+
+/* Action button - posicionado no canto */
+.card .action-button {
+    position: absolute;
+    width: 44px;
+    height: 41px;
+    right: 24px;
+    bottom: 24px;
+    background: #00ADB4;
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.card .action-icon {
+    width: 20px;
+    height: 20px;
+    background: #FFFFFF;
+}
+
+/* Edit icon - removido posicionamento absoluto desnecessário */
+.card .edit-icon {
+    width: 30px;
+    height: 30px;
+}
+
+/* Botão ver mais - mantido igual */
+.button_vermais {
+    align-self: center;
+    margin: 8px 0;
+    background: #00ADB4;
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 150%;
+    display: flex;
+    align-items: center;
+    padding: 2vh 2vw;
+    color: #FFFFFF;
+    border: none;
+    cursor: pointer;
+}
+
+/* Responsividade melhorada */
+@media (max-width: 768px) {
+    .container {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .card {
+        width: 100%;
+        max-width: none;
+        min-height: 280px;
+    }
+    
+    .section {
+        padding: 2vh 3vw;
+        margin: 0 2%;
+        width: 96%;
+    }
+    
+    .section h1 {
+        font-size: 28px;
+        line-height: 36px;
+    }
+    
+    .button_vermais {
+        padding: 1.5vh 4vw;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    #section_avisos_presidencia {
+        margin: 2%;
+        width: 96%;
+        gap: 3vh;
+    }
+    
+    .container {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .card {
+        width: 100%;
+        min-height: 260px;
+        padding: 20px;
+    }
+    
+    .section h1 {
+        font-size: 24px;
+        line-height: 32px;
+    }
+    
+    .card .project-title {
+        font-size: 20px;
+    }
+    
+    .card .project-description {
+        font-size: 14px;
+    }
+    
+    .card .user-name,
+    .card .user-role {
+        font-size: 14px;
+    }
+    
+    .card .status-button {
+        width: 120px;
+        height: 28px;
+    }
+    
+    .card .status-text {
+        font-size: 14px;
+    }
+    
+    .button_vermais {
+        padding: 1vh 3vw;
+        font-size: 14px;
+    }
+}
