@@ -1,11 +1,5 @@
 <?php 
 include "../../include/header.php";
-include "../../include/sidebar.php";
-
-/*$stmt = $pdo->prepare("SELECT * FROM projetos WHERE status != 'Concluída'");
-$stmt->execute();
-$projetos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-*/
 ?>
 <script>
 
