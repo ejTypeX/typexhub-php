@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
 /* Seção principal - mantida igual */
-#section_avisos_presidencia {
+#section_presidencia {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -43,7 +43,11 @@
     color: #FFFFFF;
     margin: 0 0 2vh 0;
 }
-
+.header_section {
+    display: flex;
+    align-items: center;
+    vertical-align: middle;
+}
 /* CARD - Estrutura principal com flexbox */
 .card {
     display: flex;
@@ -208,9 +212,222 @@
     color: #FFFFFF;
     border: none;
     cursor: pointer;
+    transition: 0.2s ease-out;
+}
+.button_vermais:hover {
+    transition: 0.2s ease-out;
+    background: #019AA0;
+}
+
+/* Botão Adicionar (+)*/
+.button_adicionar {
+    background: #38d332;
+    color: #FFFFFF;
+    display: flex;
+    align-self: center;
+    align-items: center;
+    margin: 0 15px 15px 15px;
+    padding: 0.5vh 1.3vw;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 20px;
+    cursor: pointer;
+    transition: 0.2s ease-out;
+}
+.button_adicionar:hover {
+    transition: 0.2s ease-out;
+    background: #2eb82e;
+}
+
+/* Botão Editar*/
+.button_editar {
+    align-self: center;
+    margin: 8px 0;
+    background: #00ADB4;
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    padding: 1vh 1vh;
+    color: #FFFFFF;
+    transition: 0.2s ease-out;
+}
+
+.button_editar:hover {
+    transition: 0.2s ease-out;
+    background: #019AA0;
+}
+
+.button_editar .edit_icon {
+    width: 30px;
+    height: 30px;
+    padding: 0 0 0 2px;
+}
+
+.table_tasks {
+    width: 100%;
+    border-collapse: separate;
+    color: #FFFFFF;
+    text-align: center;
+}
+
+.table_tasks thead th {
+    font-size: 18px;
+    font-weight: 600;
+    padding: 6px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* Linhas */
+.table_tasks tbody tr {
+    background: #454545;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+/* Bordas brancas arredondadas */
+.table_tasks tbody td {
+    align-items: center;
+    padding: 4px 25px;
+    vertical-align: middle;
+    border: none;
+    border-top: 1px solid #fff;
+    border-bottom: 1px solid #fff;
+}
+
+.table_tasks tbody td:first-child {
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+    border-left: 1px solid #fff;
+}
+
+.table_tasks tbody td:last-child {
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+    border-right: 1px solid #fff;
+}
+
+.table_tasks .td_descricao {
+    color: #C9C9C9;
+    text-align: justify;
+    padding: 10px 25px;
+}
+
+.td-place-center {
+    place-items: center;
+}
+
+.status-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 150px;
+    height: 30px;
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
+    border-radius: 100px;
+    border: none;
+    flex-shrink: 0;
+}
+
+.status-button.concluido {
+    background: #38D332;
+}
+
+.status-button.andamento {
+    background: #CC8100;
+}
+
+.status-button.nao-iniciado {
+    background: #D33232;
+}
+
+.status-text {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 150%;
+    color: #FFFFFF;
+}
+
+.avatar-section {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.avatar_section {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    white-space: nowrap;
+}
+
+.avatar {
+    width: 45px;
+    height: 45px;
+    background: #D9D9D9;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: baseline;
+    vertical-align: middle;
+    gap: 2px;
+}
+
+.user-name {
+    padding: 2px 0;
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    color: #FFFFFF;
+    margin: 0;
+}
+
+.user-role {
+    padding: 2px 0;
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    color: #C9C9C9;
+    margin: 0;
 }
 
 /* Responsividade melhorada */
+@media (max-width: 1024px) {
+    .button_adicionar {
+        font-size: 18px;
+        padding: 0.5vh 2vw;
+        margin: 0 10px 10px 10px;
+    }
+
+    .table_tasks {
+        font-size: 14px;
+    }
+
+    .table_tasks thead th,
+    .table_tasks tbody td {
+        padding: 8px;
+    }
+
+    .avatar {
+        width: 32px;
+        height: 32px;
+    }
+}
 @media (max-width: 768px) {
     .container {
         grid-template-columns: 1fr;
@@ -238,10 +455,30 @@
         padding: 1.5vh 4vw;
         font-size: 14px;
     }
+
+    .button_adicionar {
+        padding: 0.5vw 2.2vh;
+        font-size: 18px;
+    }
+    
+    .container#table_tasks_mobile {
+        overflow-x: auto;
+        font-size: 12px;
+    }
+
+    .status-button {    
+        max-width: 8rem;
+        font-size: 13px;
+    }
+
+    .user-name, .user-role {
+        font-size: 12px;
+        padding: 1px 0;
+    }
 }
 
 @media (max-width: 480px) {
-    #section_avisos_presidencia {
+    #section_presidencia {
         margin: 2%;
         width: 96%;
         gap: 3vh;
@@ -288,5 +525,10 @@
     .button_vermais {
         padding: 1vh 3vw;
         font-size: 14px;
+    }
+
+    .button_adicionar {
+        padding: 1vw 2.5vh;
+        font-size: 18px;
     }
 }
