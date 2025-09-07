@@ -185,8 +185,11 @@ include "../../include/header.php";
         
         <button class="button_vermais" onclick="loadMoreProjects()">Ver mais</button>
     </div>
-
 </section>
+
+    <button class="open-modal" data-modal="modal-1">
+        Open Modal
+    </button>
 
 
 </body>

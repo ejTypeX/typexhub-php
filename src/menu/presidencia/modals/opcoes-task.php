@@ -108,15 +108,18 @@
     }
 </style>
 
+<dialog id="opcoes_task_presidencia"> 
     <div id="opcoes" class="section-opcoes">
         <div class="modal-header">
             <h2>Opções</h2>
-            <button class="close-btn">&times;</button> 
+            <button class="close-modal" type="button" data-modal="modal-criar_task_presidencia">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
         </div>
-        
-        <div class="body">
+    
+        <div class="modal-body">
             <button class="edit-btn">
-                <i class="fa-solid fa-pen-to-square" ></i>
+                <i class="fa-solid fa-pen-to-square"></i>
                 <span>Editar</span>
             </button>
             <button class="delete-btn">
@@ -129,13 +132,5 @@
             <hr class="separador">
             <button class="cancel-btn">Cancelar</button>
         </div>
-        
     </div>
-
-
-</body>
-</html>
-
-    
-</body>
-</html>
+</dialog>
