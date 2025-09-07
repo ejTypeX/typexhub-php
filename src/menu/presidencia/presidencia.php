@@ -185,9 +185,17 @@ include "../../include/header.php";
         
         <button class="button_vermais" onclick="loadMoreProjects()">Ver mais</button>
     </div>
-
 </section>
 
+    <button class="open-modal" data-modal="modal_criar_task_presidencia">
+        Modal Criar Task
+    </button>
 
-</body>
-</html>
+    <button class="open-modal" data-modal="modal_opcoes_task_presidencia">
+        Modal Opção Task
+    </button>
+
+<?php
+include "modals/criar-task.php";
+include "modals/opcoes-task.php";
+?>
