@@ -16,7 +16,6 @@
 
     .modal-header {
         display: flex;
-        justify-content: center;
         align-items: flex-start;
         justify-content: space-between;
         /* border: 1px solid red; */
