@@ -15,6 +15,6 @@
 </head>
 <body>
     <header>
-    <img src="/assets/images/tx-logo.png" alt="TX Logo">
+        <img src="/assets/images/tx-logo.png" alt="TX Logo">
         <h1>TypeX Hub</h1>
     </header>
