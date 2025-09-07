@@ -195,6 +195,7 @@ include "../../include/header.php";
         Modal Opção Task
     </button>
 
-
-</body>
-</html>
+<?php
+include "modals/criar-task.php";
+include "modals/opcoes-task.php";
+?>

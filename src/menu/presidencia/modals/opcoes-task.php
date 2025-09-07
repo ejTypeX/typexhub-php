@@ -108,7 +108,7 @@
     }
 </style>
 
-<dialog id="opcoes_task_presidencia"> 
+<dialog id="modal_opcoes_task_presidencia"> 
     <div id="opcoes" class="section-opcoes">
         <div class="modal-header">
             <h2>Opções</h2>
