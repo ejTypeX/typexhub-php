@@ -187,8 +187,12 @@ include "../../include/header.php";
     </div>
 </section>
 
-    <button class="open-modal" data-modal="modal-1">
-        Open Modal
+    <button class="open-modal" data-modal="modal_criar_task_presidencia">
+        Modal Criar Task
+    </button>
+
+    <button class="open-modal" data-modal="modal_opcoes_task_presidencia">
+        Modal Opção Task
     </button>
 
 

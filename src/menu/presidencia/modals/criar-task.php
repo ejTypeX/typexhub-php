@@ -152,7 +152,7 @@
                 <h2>Título da Task</h2>
                 <span>ID da Task</span>
             </div>
-            <button class="close-modal" type="button" data-modal="modal-criar_task_presidencia">
+            <button class="close-modal" type="button" data-modal="modal_criar_task_presidencia">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
