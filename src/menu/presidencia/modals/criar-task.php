@@ -28,7 +28,7 @@
         margin-left: 50px;
         gap: 1.5em;
     }
-    .ident h1 h2 {
+    .ident h2 {
         font-size: 3em;
     }
     .ident span {
