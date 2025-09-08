@@ -20,12 +20,18 @@ Este projeto oferece um ambiente completo e moderno para desenvolvimento em PHP,
 ├── Dockerfile
 ├── src/
 │   ├── index.php
-│   ├── config.php
-│   ├── conexao.php
 │   └── auth/
 │       ├── login.php
 │       ├── logout.php
 │       └── autenticar.php
+│   └── include/
+│       ├── conexao.php
+│       ├── header.php
+│       └── sidebar.php
+│   └── menu/
+│       ├── presidência/
+│       ├── projetos/
+│       └── ...
 └── ...
 ```
 
