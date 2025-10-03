@@ -9,14 +9,13 @@ services:
     volumes:
       - ./src:/var/www/html
       - ./database:/var/www/html/database
-      - ./.env:/var/www/html/.env
     networks:
       - app-network
     environment:
-      DB_HOST: db                    # ✅ Use o nome do serviço diretamente
+      DB_HOST: db
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
-      DB_PASS: ${DB_PASSWORD}
+      DB_PASSWORD: ${DB_PASSWORD}
 
   db:
     image: mysql:latest
@@ -24,9 +23,8 @@ services:
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
-      # ❌ Removido MYSQL_HOST (não é variável válida do MySQL)
       MYSQL_DATABASE: ${DB_NAME}
-      MYSQL_USER: ${DB_USER}         # ✅ Certifique-se que DB_USER ≠ "root"
+      MYSQL_USER: ${DB_USER}
       MYSQL_PASSWORD: ${DB_PASSWORD}
     volumes:
       - db_data:/var/lib/mysql

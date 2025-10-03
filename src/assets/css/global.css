@@ -268,14 +268,14 @@
     padding: 0 0 0 2px;
 }
 
-.table_tasks {
+.table_presidencia {
     width: 100%;
     border-collapse: separate;
     color: #FFFFFF;
     text-align: center;
 }
 
-.table_tasks thead th {
+.table_presidencia thead th {
     font-size: 18px;
     font-weight: 600;
     padding: 6px;
@@ -284,38 +284,50 @@
 }
 
 /* Linhas */
-.table_tasks tbody tr {
+.table_presidencia tbody tr {
     background: #454545;
     border-radius: 6px;
     overflow: hidden;
 }
 
 /* Bordas brancas arredondadas */
-.table_tasks tbody td {
+.table_presidencia tbody td {
     align-items: center;
-    padding: 4px 25px;
+    padding: 4px 22px;
     vertical-align: middle;
     border: none;
     border-top: 1px solid #fff;
     border-bottom: 1px solid #fff;
 }
 
-.table_tasks tbody td:first-child {
+.table_presidencia tbody td:first-child {
     border-top-left-radius: 12px;
     border-bottom-left-radius: 12px;
     border-left: 1px solid #fff;
 }
 
-.table_tasks tbody td:last-child {
+.table_presidencia tbody td:last-child {
     border-top-right-radius: 12px;
     border-bottom-right-radius: 12px;
     border-right: 1px solid #fff;
 }
 
-.table_tasks .td_descricao {
+.table_presidencia .td_descricao {
     color: #C9C9C9;
     text-align: justify;
     padding: 10px 25px;
+}
+
+.table_presidencia_reuniao .td_descricao {
+    color: #fff;
+}
+
+.table_presidencia .td_motivo {
+    text-wrap: balance;
+}
+
+.table_presidencia .td_horario {
+    white-space: nowrap;
 }
 
 .td-place-center {
@@ -406,6 +418,18 @@
     margin: 0;
 }
 
+@media (max-width: 1265px) {
+    .table_presidencia.table_presidencia_reuniao {
+        font-size: 14px;
+    }
+    .table_presidencia_reuniao .td_descricao {
+        font-size: 12px;
+    }
+    .table_presidencia_reuniao .td_horario {
+        font-size: 12px;
+    }
+}
+
 /* Responsividade melhorada */
 @media (max-width: 1024px) {
     .button_adicionar {
@@ -414,12 +438,12 @@
         margin: 0 10px 10px 10px;
     }
 
-    .table_tasks {
+    .table_presidencia {
         font-size: 14px;
     }
 
-    .table_tasks thead th,
-    .table_tasks tbody td {
+    .table_presidencia thead th,
+    .table_presidencia tbody td {
         padding: 8px;
     }
 
@@ -428,6 +452,7 @@
         height: 32px;
     }
 }
+
 @media (max-width: 768px) {
     .container {
         grid-template-columns: 1fr;
@@ -461,7 +486,7 @@
         font-size: 18px;
     }
     
-    .container#table_tasks_mobile {
+    .container#table_presidencia_mobile {
         overflow-x: auto;
         font-size: 12px;
     }
