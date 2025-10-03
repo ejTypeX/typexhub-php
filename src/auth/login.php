@@ -1,7 +1,7 @@
 <?php
 session_start();
-if (isset($_SESSION['usuario'])) {
-    header('Location: /');
+if (isset($_SESSION['usuario_id'])) {
+    header('Location: ../menu/dashboard/dashboard.php');
     exit;
 }
 ?>
@@ -112,6 +112,11 @@ if (isset($_SESSION['usuario'])) {
 
             <button type="submit">Entrar</button>
         </form>
+        <?php if (isset($_GET['error'])): ?>
+            <p style="color: #FF6B6B; text-align: center; margin-top: 10px;">
+                RA ou senha incorretos. Tente novamente.
+            </p>
+        <?php endif; ?>
     </div>
 
     <footer style="

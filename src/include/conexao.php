@@ -15,8 +15,7 @@ $options = [
 
 try {
     $pdo = new PDO($dsn, $user, $pass, $options);
-    echo 'Conexão bem-sucedida ao banco de dados!';
 } catch (PDOException $e) {
-    echo 'Erro de conexão: ' . $e->getMessage();
-    exit;
+    error_log('Erro de conexão com banco de dados: ' . $e->getMessage());
+    die('Erro interno do servidor. Tente novamente mais tarde.');
 }
