@@ -532,3 +532,11 @@
         font-size: 18px;
     }
 }
+
+#tasksTableBody tr:nth-child(n+4) {
+    display: none;
+}
+
+#tasksTableBody.expanded tr {
+    display: table-row;
+}
