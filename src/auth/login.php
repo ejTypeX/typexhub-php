@@ -161,7 +161,11 @@ if (isset($_SESSION['usuario'])) {
             <button type="submit">Entrar</button>
             <p>Não tenho uma conta <a href="./registro/registro.php">Registrar</a></p>
         </form>
-
+        <?php if (isset($_GET['error'])): ?>
+            <p style="color: #FF6B6B; text-align: center; margin-top: 10px;">
+                RA ou senha incorretos. Tente novamente.
+            </p>
+        <?php endif; ?>
     </div>
 
     <footer style="
