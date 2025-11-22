@@ -7,7 +7,7 @@
     align-items: center;
     justify-content: center;
     margin: 5%;
-    background-color: greenyellow;
+    background-color: rgb(30, 30, 30);
     width: 90%;
     height: 90%;
     gap: 5vh;
@@ -33,6 +33,64 @@
     justify-items: center;
 }
 
+/*CSS das metas*/
+.container_metas {
+    width: 100%;
+    display: grid;
+    justify-items: center;
+    grid-template-columns: 1fr 1fr;
+    padding: 20px 0;
+}
+
+.card_metas {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: #454545;
+    border: 1px solid #E6E6E6;
+    border-radius: 12px;
+    max-width: 500px;
+    min-height: 200px;
+    width: 350px;
+    padding: 24px 24px 15px 24px;
+}
+
+.metas_status {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.metas_info {
+    display: flex;
+    flex-direction: column;
+    flex: 3;
+    align-content: space-between;
+}
+
+.meta_titulo {
+    font-size: 22px;
+}
+
+.meta_descricao {
+    word-break: break-word;
+    font-size: 16px;
+    color: rgb(201, 201, 201);
+}
+
+.meta_avatar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    white-space: nowrap;
+}
+
+.meta_user {
+    display: flex;
+    gap: 10px;
+}
+
 .section h1 {
     font-family: 'Inter';
     font-style: normal;
@@ -43,11 +101,13 @@
     color: #FFFFFF;
     margin: 0 0 2vh 0;
 }
+
 .header_section {
     display: flex;
     align-items: center;
     vertical-align: middle;
 }
+
 /* CARD - Estrutura principal com flexbox */
 .card {
     display: flex;
@@ -60,7 +120,8 @@
     width: 100%;
     padding: 24px;
     gap: 16px;
-    position: relative; /* Mantém para elementos que precisam */
+    position: relative;
+    /* Mantém para elementos que precisam */
 }
 
 /* Status button - agora com flexbox no topo */
@@ -74,7 +135,8 @@
     box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
     border-radius: 100px;
     border: none;
-    align-self: flex-start; /* Alinha no início */
+    align-self: flex-start;
+    /* Alinha no início */
     flex-shrink: 0;
 }
 
@@ -108,7 +170,8 @@
     line-height: 150%;
     color: #C9C9C9;
     margin: 8px 0 auto 0;
-    flex-grow: 1; /* Expande para ocupar espaço disponível */
+    flex-grow: 1;
+    /* Expande para ocupar espaço disponível */
 }
 
 /* Divider - agora usando flexbox */
@@ -214,6 +277,7 @@
     cursor: pointer;
     transition: 0.2s ease-out;
 }
+
 .button_vermais:hover {
     transition: 0.2s ease-out;
     background: #019AA0;
@@ -238,6 +302,7 @@
     cursor: pointer;
     transition: 0.2s ease-out;
 }
+
 .button_adicionar:hover {
     transition: 0.2s ease-out;
     background: #2eb82e;
@@ -458,24 +523,24 @@
         grid-template-columns: 1fr;
         gap: 20px;
     }
-    
+
     .card {
         width: 100%;
         max-width: none;
         min-height: 280px;
     }
-    
+
     .section {
         padding: 2vh 3vw;
         margin: 0 2%;
         width: 96%;
     }
-    
+
     .section h1 {
         font-size: 28px;
         line-height: 36px;
     }
-    
+
     .button_vermais {
         padding: 1.5vh 4vw;
         font-size: 14px;
@@ -491,12 +556,13 @@
         font-size: 12px;
     }
 
-    .status-button {    
+    .status-button {
         max-width: 8rem;
         font-size: 13px;
     }
 
-    .user-name, .user-role {
+    .user-name,
+    .user-role {
         font-size: 12px;
         padding: 1px 0;
     }
@@ -508,45 +574,45 @@
         width: 96%;
         gap: 3vh;
     }
-    
+
     .container {
         grid-template-columns: 1fr;
         gap: 16px;
     }
-    
+
     .card {
         width: 100%;
         min-height: 260px;
         padding: 20px;
     }
-    
+
     .section h1 {
         font-size: 24px;
         line-height: 32px;
     }
-    
+
     .card .project-title {
         font-size: 20px;
     }
-    
+
     .card .project-description {
         font-size: 14px;
     }
-    
+
     .card .user-name,
     .card .user-role {
         font-size: 14px;
     }
-    
+
     .card .status-button {
         width: 120px;
         height: 28px;
     }
-    
+
     .card .status-text {
         font-size: 14px;
     }
-    
+
     .button_vermais {
         padding: 1vh 3vw;
         font-size: 14px;
