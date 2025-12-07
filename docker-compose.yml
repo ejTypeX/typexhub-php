@@ -12,13 +12,14 @@ services:
     networks:
       - app-network
     environment:
-      DB_HOST: db
+      DB_HOST: ${DB_HOST}
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
+    command: /bin/bash -c "echo 'ServerName localhost' >> /etc/apache2/apache2.conf && apache2-foreground"
 
   db:
-    image: mysql:latest
+    image: mysql:9.4.0
     container_name: typexhub-db
     restart: unless-stopped
     environment:
@@ -40,8 +41,10 @@ services:
     ports:
       - "8081:80"
     environment:
-      PMA_HOST: db                   # ✅ Correto
+      PMA_HOST: db
       PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: ${DB_ROOT_PASSWORD}
     networks:
       - app-network
 

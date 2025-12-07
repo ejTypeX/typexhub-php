@@ -3,7 +3,7 @@
 $host = getenv('DB_HOST');
 $db   = getenv('DB_NAME');
 $user = getenv('DB_USER');
-$pass = getenv('DB_PASS');
+$pass = getenv('DB_PASSWORD') ?: getenv('DB_PASS');
 $charset = 'utf8mb4';
 
 $dsn = "mysql:host=$host;port=3306;dbname=$db;charset=$charset";

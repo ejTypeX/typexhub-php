@@ -1,12 +1,59 @@
 <?php 
-session_start();
 
-if (!isset($_SESSION['usuario_id'])) {
-    header('Location: ../../auth/login.php');
+include "../../include/header.php";
+include "../../include/conexao.php";
+
+$projeto_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+
+if ($projeto_id > 0) {
+    $stmt = $pdo->prepare("
+        SELECT 
+            p.projeto_id,
+            p.projeto_nome,
+            p.projeto_desc,
+            p.projeto_data_inicio,
+            p.projeto_data_fim,
+            p.projeto_status,
+            u.usuario_nome,
+            u.usuario_sobrenome,
+            u.usuario_cargo,
+            d.diretoria_nome
+        FROM projetos p
+        INNER JOIN usuarios u ON p.projeto_responsavel = u.usuario_id
+        INNER JOIN diretorias d ON p.projeto_diretoria = d.diretoria_id
+        WHERE p.projeto_id = ?
+    ");
+    $stmt->execute([$projeto_id]);
+    $projeto = $stmt->fetch();
+    
+    if (!$projeto) {
+        header('Location: projetos.php');
+        exit;
+    }
+} else {
+    header('Location: projetos.php');
     exit;
 }
 
-include "../../include/header.php";
+function getStatusClass($status) {
+    switch($status) {
+        case 1: return 'project-status-yellow';
+        case 0: return 'project-status-red';
+        default: return 'project-status-yellow';
+    }
+}
+
+function getStatusText($status) {
+    switch($status) {
+        case 1: return 'Em Andamento';
+        case 0: return 'Não Iniciado';
+        default: return 'Em Andamento';
+    }
+}
+
+function formatarData($data) {
+    return date('d/m/Y', strtotime($data));
+}
 ?>
 
 <!DOCTYPE html>
@@ -16,7 +63,6 @@ include "../../include/header.php";
 <body class="project-body">
     <div class="project-container">
 
-        <!-- Avisos -->
         <div class="project-section">
             <div class="project-section-header">
                 <h2 class="project-ms">Avisos</h2>
@@ -26,24 +72,22 @@ include "../../include/header.php";
             </div>
         </div>
 
-        <!-- TypeX Hub -->
         <div class="project-section">
             <div class="project-section-header project-section-header-center">
-                <h1 class="project-title-center">TypeX Hub</h1>
+                <h1 class="project-title-center"><?php echo ($projeto['projeto_nome']); ?></h1>
             </div>
 
-            <!-- Resumo -->
             <div class="project-card">
                 <h3 class="project-title-card">Resumo:</h3>
-                <p>Aplicativo para centralizar as necessidades de gestão de uma empresa júnior em um único aplicativo.
-                </p>
-                <p>...</p>
-                <p>...</p>
+                <p><?php echo ($projeto['projeto_desc']); ?></p>
+                <p><strong>Diretoria:</strong> <?php echo ($projeto['diretoria_nome']); ?></p>
+                <p><strong>Responsável:</strong> <?php echo ($projeto['usuario_nome'] . ' ' . $projeto['usuario_sobrenome']); ?> - <?php echo ($projeto['usuario_cargo']); ?></p>
+                <p><strong>Data de Início:</strong> <?php echo formatarData($projeto['projeto_data_inicio']); ?></p>
+                <p><strong>Data de Término:</strong> <?php echo formatarData($projeto['projeto_data_fim']); ?></p>
+                <p><strong>Status:</strong> <span class="project-status <?php echo getStatusClass($projeto['projeto_status']); ?>"><?php echo getStatusText($projeto['projeto_status']); ?></span></p>
             </div>
         </div>
 
-
-        <!-- Tecnologia -->
         <div class="project-section">
             <div class="project-card">
                 <h3 class="project-title-card">Tecnologia</h3>
@@ -51,7 +95,6 @@ include "../../include/header.php";
             </div>
         </div>
 
-        <!-- Links Úteis -->
         <div class="project-section">
             <div class="project-card">
                 <h3 class="project-title-card">Links Úteis</h3>
@@ -61,10 +104,9 @@ include "../../include/header.php";
             </div>
         </div>
 
-        <!-- TypeX Hub - Tabela de Tasks -->
         <div class="project-section">
             <div class="project-section-header">
-                <h1>TypeX Hub</h1>
+                <h1><?php echo ($projeto['projeto_nome']); ?> - Tasks</h1>
             </div>
 
             <table class="project-table">
@@ -156,7 +198,6 @@ include "../../include/header.php";
             </table>
         </div>
 
-        <!-- Versões -->
         <div class="project-section">
             <div class="project-section-header">
                 <h1>Versões</h1>

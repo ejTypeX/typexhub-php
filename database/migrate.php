@@ -1,24 +1,14 @@
 <?php
-/**
- * Sistema de Migrations - TypeX Hub
- * 
- * Versão corrigida que resolve:
- * - Problema "There is no active transaction"
- * - Parser SQL mais robusto
- * - Debug detalhado 
- * - Tratamento correto de erros
- * - Compatibilidade com SQL do Workbench
- */
-
-// Configurações do banco de dados
 $envPath = '.env';
-if (file_exists($envPath)) {
-    $vars = parse_ini_file($envPath, false, INI_SCANNER_RAW);
-    foreach ($vars as $key => $value) {
-        $value = trim($value, "'\"");
-        putenv("$key=$value");
-        $_ENV[$key] = $value;
-        $_SERVER[$key] = $value;
+if (file_exists($envPath) && is_readable($envPath)) {
+    $vars = @parse_ini_file($envPath, false, INI_SCANNER_RAW);
+    if ($vars !== false && is_array($vars)) {
+        foreach ($vars as $key => $value) {
+            $value = trim($value, "'\"");
+            putenv("$key=$value");
+            $_ENV[$key] = $value;
+            $_SERVER[$key] = $value;
+        }
     }
 }
 
@@ -116,15 +106,10 @@ function getNextBatchNumber($pdo) {
     return $stmt->fetch(PDO::FETCH_ASSOC)['next_batch'];
 }
 
-/**
- * ✅ PARSER SQL CORRIGIDO - Resolve o problema principal
- */
 function parseSqlStatements($sql) {
-    // Remove comentários SQL (-- e /* */)
     $sql = preg_replace('/--.*$/m', '', $sql);
     $sql = preg_replace('/\/\*.*?\*\//s', '', $sql);
     
-    // Divide por ; mas ignora ; dentro de strings
     $statements = [];
     $current = '';
     $inString = false;
@@ -163,7 +148,6 @@ function parseSqlStatements($sql) {
         $current .= $char;
     }
     
-    // Add last statement if exists
     $current = trim($current);
     if (!empty($current)) {
         $statements[] = $current;
@@ -172,9 +156,6 @@ function parseSqlStatements($sql) {
     return $statements;
 }
 
-/**
- * ✅ EXECUÇÃO DE MIGRATION CORRIGIDA - Com controle de transação adequado
- */
 function executeMigration($pdo, $migrationName) {
     $migrationFile = __DIR__ . '/migrations/' . $migrationName . '.sql';
     
@@ -190,7 +171,6 @@ function executeMigration($pdo, $migrationName) {
         throw new Exception("Migration file is empty: $migrationFile");
     }
     
-    // ✅ USA O PARSER CORRIGIDO
     $statements = parseSqlStatements($sql);
     echo "🔧 Encontradas " . count($statements) . " declarações SQL\n";
     
@@ -198,11 +178,9 @@ function executeMigration($pdo, $migrationName) {
         throw new Exception("No valid SQL statements found in migration");
     }
     
-    // ✅ CONTROLE CORRETO DE TRANSAÇÃO
     $transactionStarted = false;
     
     try {
-        // Inicia transação apenas se não houver uma ativa
         if (!$pdo->inTransaction()) {
             $pdo->beginTransaction();
             $transactionStarted = true;
@@ -235,7 +213,6 @@ function executeMigration($pdo, $migrationName) {
             throw new Exception("Nenhuma declaração SQL foi executada");
         }
         
-        // ✅ REGISTRA COMO EXECUTADA ANTES DO COMMIT
         echo "📝 Registrando migration como executada...\n";
         $batchNumber = getNextBatchNumber($pdo);
         
@@ -251,7 +228,6 @@ function executeMigration($pdo, $migrationName) {
             $stmt->execute([$migrationName, $batchNumber]);
         }
         
-        // ✅ COMMIT APENAS SE INICIAMOS A TRANSAÇÃO
         if ($transactionStarted && $pdo->inTransaction()) {
             $pdo->commit();
             echo "✅ Transação commitada com sucesso\n";
@@ -261,7 +237,6 @@ function executeMigration($pdo, $migrationName) {
         return true;
         
     } catch (Exception $e) {
-        // ✅ ROLLBACK APENAS SE INICIAMOS A TRANSAÇÃO
         if ($transactionStarted && $pdo->inTransaction()) {
             $pdo->rollback();
             echo "❌ ROLLBACK executado - nenhuma alteração foi salva\n";
@@ -270,9 +245,6 @@ function executeMigration($pdo, $migrationName) {
     }
 }
 
-/**
- * ✅ VERIFICAÇÃO PÓS-EXECUÇÃO - Confirma se tabelas foram criadas
- */
 function verifyMigrationResults($pdo, $migrationName) {
     echo "\n🔍 Verificando resultados da migration...\n";
     
@@ -285,7 +257,6 @@ function verifyMigrationResults($pdo, $migrationName) {
             echo "   - $table\n";
         }
         
-        // Verifica se a migration foi realmente registrada
         $stmt = $pdo->prepare("SELECT executed FROM migrations_controle WHERE migration_name = ?");
         $stmt->execute([$migrationName]);
         $executed = $stmt->fetchColumn();
@@ -328,7 +299,6 @@ function runMigrations($pdo) {
             echo "🚀 Executando: $migration...\n";
             executeMigration($pdo, $migration);
             
-            // ✅ VERIFICA SE REALMENTE FUNCIONOU
             if (verifyMigrationResults($pdo, $migration)) {
                 echo "✅ $migration: SUCESSO CONFIRMADO!\n\n";
             } else {
@@ -473,7 +443,6 @@ function createMigration($pdo, $migrationName) {
     }
 }
 
-// Processamento dos argumentos da linha de comando
 $command = isset($argv[1]) ? $argv[1] : 'run';
 $migrationName = isset($argv[2]) ? $argv[2] : '';
 
