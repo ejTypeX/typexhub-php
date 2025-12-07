@@ -16,7 +16,11 @@ include "../../include/header.php";
     
     <div class="quick-links">
         <a href="../rh/rh.php" class="btn btn-primary">Recursos Humanos</a>
+        <a href="../rh/listaMembro.php" class="btn btn-primary">Listar Membros</a>
+        <a href="../rh/listaReconhecimento.php" class="btn btn-primary">Listar Reconhecimento</a>
+        <a href="../rh/listaAdvertencia.php" class="btn btn-primary">Listar Advertencias</a>
         <a href="../rh/listarUsuarios.php" class="btn btn-secondary">Ver Usuários</a>
+        <a href="../rh/listaReuniao.php" class="btn btn-primary">Listar Reuniões</a>
         <a href="../../auth/logout.php" class="btn btn-danger">Sair</a>
     </div>
 </div>
