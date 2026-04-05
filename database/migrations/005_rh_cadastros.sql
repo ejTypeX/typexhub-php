@@ -5,21 +5,7 @@
 
 -- 📄 Mudanças detectadas automaticamente:
 
-CREATE TABLE `advertencias` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `membro_id` int DEFAULT NULL,
-  `diretor_id` int DEFAULT NULL,
-  `motivo` text,
-  `acao_corretiva` text,
-  `data` date DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `membro_id` (`membro_id`),
-  KEY `diretor_id` (`diretor_id`),
-  CONSTRAINT `advertencias_ibfk_1` FOREIGN KEY (`membro_id`) REFERENCES `membro` (`id`),
-  CONSTRAINT `advertencias_ibfk_2` FOREIGN KEY (`diretor_id`) REFERENCES `diretoria` (`dir_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -307,6 +293,22 @@ CREATE TABLE `usuarios` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+CREATE TABLE `advertencias` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `membro_id` int DEFAULT NULL,
+  `diretor_id` int DEFAULT NULL,
+  `motivo` text,
+  `acao_corretiva` text,
+  `data` date DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `membro_id` (`membro_id`),
+  KEY `diretor_id` (`diretor_id`),
+  CONSTRAINT `advertencias_ibfk_1` FOREIGN KEY (`membro_id`) REFERENCES `membro` (`id`),
+  CONSTRAINT `advertencias_ibfk_2` FOREIGN KEY (`diretor_id`) REFERENCES `diretoria` (`dir_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 -- ⚠️  ATENÇÃO: Migration gerada automaticamente!
