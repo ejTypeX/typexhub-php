@@ -1,29 +1,11 @@
-<?php
-session_start();
-$mensagem_sucesso = '';
-
-if (isset($_SESSION['mensagem_sucesso'])) {
-    $mensagem_sucesso = $_SESSION['mensagem_sucesso'];
-    // Limpa a sessão para que não apareça novamente
-    unset($_SESSION['mensagem_sucesso']);
-}
-
-if (isset($_SESSION['usuario'])) {
-    header('Location: /');
-    exit;
-}
-?>
 <!DOCTYPE html>
 <html lang="pt-br">
 
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TX Hub - Login</title>
-    <link rel="shortcut icon" href="../assets/images/tx-logo.ico" type="image/x-icon" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <title>TX Hub - Sign Up</title>
+    <link rel="shortcut icon" href="../../assets/images/tx-logo.ico" type="image/x-icon" />
     <style>
         * {
             box-sizing: border-box;
@@ -54,6 +36,9 @@ if (isset($_SESSION['usuario'])) {
         }
 
         .form-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
             backdrop-filter: blur(12px);
             background-color: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -61,7 +46,7 @@ if (isset($_SESSION['usuario'])) {
             border-radius: 16px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
             width: 100%;
-            max-width: 400px;
+            max-width: 800px;
             transition: all 0.3s ease;
         }
 
@@ -79,6 +64,7 @@ if (isset($_SESSION['usuario'])) {
 
         .form-container input {
             width: 100%;
+            max-height: 42.13px;
             padding: 12px 16px;
             margin-bottom: 20px;
             border: none;
@@ -110,11 +96,11 @@ if (isset($_SESSION['usuario'])) {
             background-color: #006d71;
             transform: translateY(-2px);
         }
-
+        
         p {
             color: #D9D9D9;
         }
-
+        
         a {
             color: lightblue;
         }
@@ -122,50 +108,60 @@ if (isset($_SESSION['usuario'])) {
         a:hover {
             color: #00afb5;
         }
-
-        .message-box {
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            width: 100%;
-            font-size: 0.95rem;
-            text-align: center;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
     </style>
 </head>
 
 <body>
     <div class="form-wrapper">
-        
-        <?php if ($mensagem_sucesso): ?>
-            <div class="message-box success">
-                <?php echo htmlspecialchars($mensagem_sucesso); ?>
+        <img class="logo" src="../../assets/images/typex-logo.png" alt="Logo da TypeX" />
+        <form class="form-container" action="./processaRegistro.php" method="post">
+            <div class="register">
+
+                <label for="ra">RA:</label>
+                <input type="text" name="ra" id="ra" required />
+
+                <label for="nome">Nome:</label>
+                <input type="text" name="nome" id="nome" required />
+
+                <label for="sobrenome">Sobrenome:</label>
+                <input type="text" name="sobrenome" id="sobrenome" required />
+
+                <label for="email">Email:</label>
+                <input type="email" name="email" id="email" required />
+
+                <label for="telefone">Telefone:</label>
+                <input type="tel" name="telefone" id="telefone" required />
+
+                <label for="senha">Senha:</label>
+                <input type="password" name="senha" id="senha" required />
+
             </div>
-        <?php endif; ?>
 
-        <img class="logo" src="../assets/images/typex-logo.png" alt="Logo da TypeX" />
-        <form class="form-container" action="autenticar.php" method="post">
-            <label for="ra">RA:</label>
-            <input type="text" name="ra" id="ra" required />
+            <div class="register">
+                <label for="cpf">CPF:</label>
+                <input type="text" name="cpf" id="cpf" required />
 
-            <label for="senha">Senha:</label>
-            <input type="password" name="senha" id="senha" required />
+                <label for="rg">RG:</label>
+                <input type="text" name="rg" id="rg" required />
 
-            <button type="submit">Entrar</button>
-            <p>Não tenho uma conta <a href="./registro/registro.php">Registrar</a></p>
+                <label for="nascimento">Data de nascimento:</label>
+                <input type="date" name="nascimento" id="nascimento" required />
+
+                <label for="cargo">Cargo:</label>
+                <input type="text" name="cargo" id="cargo" required />
+
+                <label for="diretoria">Diretoria:</label>
+                <input type="text" name="diretoria" id="diretoria" />
+
+                <label for="confirmarSenha">Repita a Senha:</label>
+                <input type="password" name="confirmarSenha" id="confirmarSenha" required />
+
+            </div>
+
+            <button type="submit">Registrar</button>
+            <p>Já tenho uma conta <a href="../login.php">Fazer login</a></p>
         </form>
-        <?php if (isset($_GET['error'])): ?>
-            <p style="color: #FF6B6B; text-align: center; margin-top: 10px;">
-                RA ou senha incorretos. Tente novamente.
-            </p>
-        <?php endif; ?>
+
     </div>
 
     <footer style="
