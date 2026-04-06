@@ -1,47 +1,22 @@
 <?php
-/**
- * Sistema de Seeders - TypeX Hub
- * 
- * Este script gerencia os seeders do banco de dados, permitindo:
- * - Aplicar seeders pendentes
- * - Verificar status dos seeders
- * - Rollback de seeders (opcional)
- * - Criar novos seeders
- * 
- * Uso:
- * docker exec -it typexhub php database/seeder.php                    # Aplica todos os seeders pendentes
- * docker exec -it typexhub php database/seeder.php status             # Mostra status dos seeders
- * docker exec -it typexhub php database/seeder.php rollback           # Desfaz o último seeder
- * docker exec -it typexhub php database/seeder.php --create nome      # Cria um novo seeder
- */
 
-// Configurações do banco de dados
 $envPath = '.env';
-if (file_exists($envPath)) {
-    // INI_SCANNER_RAW preserva as aspas, se houver
-    $vars = parse_ini_file($envPath, false, INI_SCANNER_RAW);
+if (file_exists($envPath) && is_readable($envPath)) {
+    $vars = @parse_ini_file($envPath, false, INI_SCANNER_RAW);
+    
+    if ($vars !== false && is_array($vars)) {
+        foreach ($vars as $key => $value) {
+            $value = trim($value, "'\"");
 
-    foreach ($vars as $key => $value) {
-        // opcional: remover aspas simples/duplas
-        $value = trim($value, "'\"");
-
-        // coloca no ambiente
-        putenv("$key=$value");
-        $_ENV[$key]    = $value;
-        $_SERVER[$key] = $value;
+            putenv("$key=$value");
+            $_ENV[$key]    = $value;
+            $_SERVER[$key] = $value;
+        }
     }
 }
 
-/**
- * Tenta descobrir o Git user.name configurado, seja por comando ou
- * lendo .git/config ou ~/.gitconfig. Se nada for encontrado,
- * retorna o usuário do sistema (get_current_user()).
- *
- * @return string
- */
 function getGitUsername(): string
 {
-    // 1) Tentar via comando shell (se shell_exec estiver habilitado)
     if (function_exists('shell_exec')) {
         $name = trim(@shell_exec('git config --get user.name 2>/dev/null'));
         if ($name !== '') {
@@ -50,10 +25,9 @@ function getGitUsername(): string
         }
     }
 
-    // 2) Procurar em arquivos de config: local e global
     $configFiles = [
-        __DIR__ . '/.git/config',           // config do repositório
-        getenv('HOME') . '/.gitconfig',     // config global do usuário
+        __DIR__ . '/.git/config',
+        getenv('HOME') . '/.gitconfig',
     ];
     foreach ($configFiles as $file) {
         if (file_exists($file) && is_readable($file)) {
@@ -61,16 +35,13 @@ function getGitUsername(): string
             $inUserSec = false;
             foreach ($lines as $line) {
                 $line = trim($line);
-                // Entramos na seção [user]
                 if (preg_match('/^\[user\]/i', $line)) {
                     $inUserSec = true;
                     continue;
                 }
-                // Se chegamos em outra seção, saímos
                 if ($inUserSec && preg_match('/^\[.+\]/', $line)) {
                     break;
                 }
-                // Dentro de [user], buscar “name = ...”
                 if ($inUserSec && preg_match('/^name\s*=\s*(.+)$/i', $line, $m)) {
                     return trim($m[1]);
                 }
@@ -78,11 +49,9 @@ function getGitUsername(): string
         }
     }
 
-    // 3) Fallback: usuário do sistema de arquivos
     return get_current_user();
 }
 
-// em qualquer outro ponto da sua aplicação
 $dbHost = getenv('DB_HOST');
 $dbName = getenv('DB_NAME');
 $dbUser = getenv('DB_USER');
@@ -97,9 +66,6 @@ try {
     exit(1);
 }
 
-/**
- * Cria a tabela de controle de seeders se não existir
- */
 function createSeedersTable($pdo) {
     $sql = "
         CREATE TABLE IF NOT EXISTS seeders_controle (
@@ -116,23 +82,14 @@ function createSeedersTable($pdo) {
     $pdo->exec($sql);
 }
 
-/**
- * Obtém todos os seeders executados
- */
 function getExecutedSeeders($pdo) {
     $stmt = $pdo->query("SELECT seeder_name FROM seeders_controle WHERE executed = 1 ORDER BY id");
     return $stmt->fetchAll(PDO::FETCH_COLUMN);
 }
 
-/**
- * Obtém todos os seeders disponíveis para execução
- * Verifica quais seeders do diretório ainda não foram executados no banco
- */
 function getAvailableSeeders($pdo) {
-    // Garante que a tabela de controle existe
     createSeedersTable($pdo);
     
-    // Obtém todos os seeders do diretório
     $seedersDir = __DIR__ . '/seeders/';
     $files = glob($seedersDir . '*.sql');
     $allSeeders = [];
@@ -143,26 +100,18 @@ function getAvailableSeeders($pdo) {
     
     sort($allSeeders);
     
-    // Obtém os seeders já executados no banco
     $executedSeeders = getExecutedSeeders($pdo);
     
-    // Retorna apenas os seeders que ainda não foram executados
     $availableSeeders = array_diff($allSeeders, $executedSeeders);
     
-    return array_values($availableSeeders); // Reindexa o array
+    return array_values($availableSeeders);
 }
 
-/**
- * Obtém o próximo número de batch
- */
 function getNextBatchNumber($pdo) {
     $stmt = $pdo->query("SELECT COALESCE(MAX(batch_number), 0) + 1 as next_batch FROM seeders_controle");
     return $stmt->fetch(PDO::FETCH_ASSOC)['next_batch'];
 }
 
-/**
- * Executa um seeder
- */
 function executeSeeder($pdo, $seederName) {
     $seederFile = __DIR__ . '/seeders/' . $seederName . '.sql';
     
@@ -175,32 +124,26 @@ function executeSeeder($pdo, $seederName) {
     $pdo->beginTransaction();
     
     try {
-        // Divide o SQL em declarações individuais e executa cada uma
         $statements = explode(';', $sql);
         
         foreach ($statements as $statement) {
             $statement = trim($statement);
             
-            // Ignora linhas vazias e comentários
             if (!empty($statement) && !preg_match('/^--/', $statement)) {
                 $pdo->exec($statement);
             }
         }
         
-        // Registra o seeder como executado
         $batchNumber = getNextBatchNumber($pdo);
         
-        // Verifica se já existe um registro para este seeder
         $stmt = $pdo->prepare("SELECT COUNT(*) FROM seeders_controle WHERE seeder_name = ?");
         $stmt->execute([$seederName]);
         $exists = $stmt->fetchColumn() > 0;
         
         if ($exists) {
-            // Atualiza o registro existente
             $stmt = $pdo->prepare("UPDATE seeders_controle SET executed = 1, executed_at = CURRENT_TIMESTAMP WHERE seeder_name = ?");
             $stmt->execute([$seederName]);
         } else {
-            // Insere novo registro
             $stmt = $pdo->prepare("INSERT INTO seeders_controle (seeder_name, batch_number, executed, executed_at) VALUES (?, ?, 1, CURRENT_TIMESTAMP)");
             $stmt->execute([$seederName, $batchNumber]);
         }
@@ -213,15 +156,12 @@ function executeSeeder($pdo, $seederName) {
     }
 }
 
-/**
- * Executa todos os seeders pendentes
- */
 function runSeeders($pdo) {
     createSeedersTable($pdo);
     showStatus($pdo);
     
     $available = getAvailableSeeders($pdo);
-    $pending = $available; // Agora getAvailableSeeders já retorna apenas os pendentes
+    $pending = $available;
     
     echo "Seeders disponíveis: " . count($pending) . "\n";
     if (!empty($pending)) {
@@ -251,15 +191,11 @@ function runSeeders($pdo) {
     echo "\nSeeders executados com sucesso!\n";
 }
 
-/**
- * Mostra o status dos seeders
- */
 function showStatus($pdo) {
     createSeedersTable($pdo);
     
     $executed = getExecutedSeeders($pdo);
     
-    // Obtém todos os seeders do diretório
     $seedersDir = __DIR__ . '/seeders/';
     $files = glob($seedersDir . '*.sql');
     $allSeedersFromDir = [];
@@ -269,22 +205,18 @@ function showStatus($pdo) {
     }
     sort($allSeedersFromDir);
     
-    // Calcula os seeders pendentes
     $pending = array_diff($allSeedersFromDir, $executed);
     
-    // Verifica seeders pendentes sem registro no banco e insere automaticamente
     $insertedSeeders = [];
     if (!empty($pending)) {
         $batchNumber = getNextBatchNumber($pdo);
         
         foreach ($pending as $seeder) {
-            // Verifica se o seeder já tem registro no banco
             $stmt = $pdo->prepare("SELECT COUNT(*) FROM seeders_controle WHERE seeder_name = ?");
             $stmt->execute([$seeder]);
             $exists = $stmt->fetchColumn() > 0;
             
             if (!$exists) {
-                // Insere o registro do seeder pendente
                 try {
                     $stmt = $pdo->prepare("INSERT INTO seeders_controle (seeder_name, batch_number, executed) VALUES (?, ?, 0)");
                     $stmt->execute([$seeder, $batchNumber]);
@@ -299,7 +231,6 @@ function showStatus($pdo) {
     echo "STATUS DOS SEEDERS\n";
     echo "==================\n\n";
     
-    // Mostra seeders recém-registrados
     if (!empty($insertedSeeders)) {
         echo "🆕 Seeders registrados automaticamente (" . count($insertedSeeders) . "):\n";
         foreach ($insertedSeeders as $seeder) {
@@ -325,26 +256,19 @@ function showStatus($pdo) {
     echo "\n";
 }
 
-/**
- * Cria um novo seeder
- */
 function createSeeder($pdo, $seederName) {
-    // Garante que a tabela de controle existe
     createSeedersTable($pdo);
     
-    // Valida o nome do seeder
     if (empty($seederName)) {
         echo "Erro: Nome do seeder é obrigatório!\n";
         echo "Uso: php seeder.php --create nome_do_seeder\n";
         return false;
     }
     
-    // Remove caracteres especiais e espaços do nome
     $seederName = preg_replace('/[^a-zA-Z0-9_]/', '_', $seederName);
     $seederName = preg_replace('/_+/', '_', $seederName);
     $seederName = trim($seederName, '_');
     
-    // Gera o próximo número de seeder
     $seedersDir = __DIR__ . '/seeders/';
     $files = glob($seedersDir . '*.sql');
     $maxNumber = 0;
@@ -363,13 +287,11 @@ function createSeeder($pdo, $seederName) {
     $seederFileName = sprintf('%03d_%s.sql', $nextNumber, $seederName);
     $seederFilePath = $seedersDir . $seederFileName;
     
-    // Verifica se o arquivo já existe
     if (file_exists($seederFilePath)) {
         echo "Erro: Seeder '$seederFileName' já existe!\n";
         return false;
     }
     
-    // Cria o conteúdo do arquivo de seeder
     $seederContent = "-- ==================== SEEDER {$nextNumber}: " . strtoupper($seederName) . " ====================\n";
     $seederContent .= "-- Data: " . date('Y-m-d H:i:s') . "\n";
     $seederContent .= "-- Autor: " . (getGitUsername() ?: 'sistema') . "\n";
@@ -378,13 +300,11 @@ function createSeeder($pdo, $seederName) {
     $seederContent .= "-- INSERT INTO tabela (coluna1, coluna2) VALUES ('valor1', 'valor2');\n";
     $seederContent .= "-- INSERT INTO tabela (coluna1, coluna2) VALUES ('valor3', 'valor4');\n\n";
     
-    // Cria o arquivo
     if (file_put_contents($seederFilePath, $seederContent)) {
         echo "✅ Seeder criado com sucesso!\n";
         echo "📁 Arquivo: $seederFilePath\n";
         echo "📝 Edite o arquivo e execute 'php seeder.php run' para aplicar\n";
         
-        // Registra o seeder no banco como pendente (igual ao showStatus)
         $batchNumber = getNextBatchNumber($pdo);
         try {
             $stmt = $pdo->prepare("INSERT INTO seeders_controle (seeder_name, batch_number, executed) VALUES (?, ?, 0)");
@@ -401,7 +321,6 @@ function createSeeder($pdo, $seederName) {
     }
 }
 
-// Processamento dos argumentos da linha de comando
 $command = isset($argv[1]) ? $argv[1] : 'run';
 $seederName = isset($argv[2]) ? $argv[2] : '';
 
