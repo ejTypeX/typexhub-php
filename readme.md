@@ -2,7 +2,6 @@
 
 > Projeto PHP com Docker e MySQL
 
-
 ## 📄 Descrição
 
 Este projeto oferece um ambiente completo e moderno para desenvolvimento em PHP, com os seguintes recursos integrados:
@@ -15,24 +14,30 @@ Este projeto oferece um ambiente completo e moderno para desenvolvimento em PHP,
 
 ## 📁 Estrutura de Pastas
 
-```
+``` bash
 / (raiz)
 ├── docker-compose.yml
 ├── Dockerfile
 ├── src/
 │   ├── index.php
-│   ├── config.php
-│   ├── conexao.php
 │   └── auth/
 │       ├── login.php
 │       ├── logout.php
 │       └── autenticar.php
+│   └── include/
+│       ├── conexao.php
+│       ├── header.php
+│       └── sidebar.php
+│   └── menu/
+│       ├── presidência/
+│       ├── projetos/
+│       └── ...
 └── ...
 ```
 
 ## ▶️ Como rodar o projeto
 
-#### ✅ Pré-requisitos
+### ✅ Pré-requisitos
 
 - Docker instalado
 - Docker Compose instalado
@@ -62,10 +67,91 @@ if (!isset($_SESSION['usuario'])) {
 
 Logout disponível em: `/auth/logout.php`
 
-## ⚙️ Configurações
+## ⚙️ Configurações e Banco de Dados
 
 - Conexão PDO reutilizável: `src/include/conexao.php`
 
+### 🗄️ Sistema de Migrations
+
+O projeto usa **migrations** para versionar o banco de dados:
+
+```bash
+# Aplicar todas as migrations pendentes
+docker exec -it typexhub php database/migrate.php
+
+# Verificar status das migrations
+docker exec -it typexhub php database/migrate.php status
+
+# Criar nova migration
+./dev-sync.sh nova
+```
+
+### 🌱 Seeder de desenvolvimento
+
+Após aplicar **todas** as migrations, popule departamentos, papéis e usuários de teste (idempotente — pode rodar várias vezes):
+
+1. Defina no `.env` (na raiz do projeto), **sem commitar credenciais reais**:
+
+   - `SEED_ROOT_PASSWORD` — senha do usuário root de desenvolvimento (papel **presidente**, `usr_senha_temporaria = 0`).
+   - `SEED_DEV_PASSWORD` — senha compartilhada dos demais usuários seedados.
+   - Opcional: `SEED_ROOT_EMAIL`, `SEED_ROOT_RA` (padrões: `presidente@dev.com`, `presidente.dev`).
+
+2. Com Docker:
+
+   ```bash
+   docker exec -it typexhub php database/seed_dev.php
+   ```
+
+   Localmente (PHP na máquina, mesmo `.env`):
+
+   ```bash
+   php database/seed_dev.php
+   ```
+
+O script usa `password_hash()` (mesmo algoritmo padrão do PHP que o login com `password_verify`) e imprime no terminal o que foi **inserido** ou **ignorado** (já existia).
+
+Inclui ainda **tarefas simuladas** na tabela legada `tasks` (migration 001): cria diretorias `[DEV] …`, usuários legados (`legacy.*@dev.local`), o projeto `[DEV] Projeto TypeX Hub` e várias tasks com títulos prefixados `[DEV]` (idempotentes por título).
+
+**Rodar migrations + seed em sequência (Docker):**
+
+```bash
+docker exec -it typexhub php database/migrate.php
+docker exec -it typexhub php database/seed_dev.php
+```
+
+(Defina `SEED_ROOT_PASSWORD` e `SEED_DEV_PASSWORD` no `.env` na raiz para o container receber as variáveis após `docker compose up`.)
+
+### 🔄 Workflow de Desenvolvimento (Híbrido)
+
+**Mais prático:** Desenvolva no phpMyAdmin + Migrations para versionamento
+
+1. **Desenvolva rapidamente no phpMyAdmin:**
+
+   - Acesse: [http://localhost:8081](http://localhost:8081)
+   - Crie tabelas, modifique estruturas
+   - Teste queries e dados
+
+2. **Capture mudanças automaticamente:**
+
+   ```bash
+   ./dev-sync.sh sync    # Extrai estrutura atual
+   ./dev-sync.sh nova    # Cria migration baseada nas mudanças
+   ```
+
+3. **Versione e compartilhe:**
+
+   ```bash
+   git add database/migrations/
+   git commit -m "feat: adiciona nova funcionalidade"
+   git push
+   ```
+
+4. **Equipe sincroniza:**
+
+   ```bash
+   git pull
+   php database/migrate.php  # Aplica mudanças automaticamente
+   ```
 
 ## 🛠️ Visão Geral do Processo de Desenvolvimento com Git
 
@@ -78,6 +164,7 @@ Este projeto utiliza uma estrutura de versionamento com Git baseada em branches.
 - **`homolog`** → Ambiente de testes e validação
 
 ### 🔄 mainclo de desenvolvimentomain
+
 1. **Criar uma branch para sua funcionalidade**  
    A partir da `develop`, crie umaain com nome descritivo:
 
@@ -86,6 +173,7 @@ Este projeto utiliza uma estrutura de versionamento com Git baseada em branches.
    git pull origin develop
    git checkout -b feature/login-google
    ```
+
    ---
 
 2. **Desenvolver sua funcionalidade**  
@@ -96,12 +184,13 @@ Este projeto utiliza uma estrutura de versionamento com Git baseada em branches.
    git commit -m "feat: implementa login com Google"
    git push origin feature/login-google
    ```
+
     ---
 
 3. **Abrir um Pull Request para a `develop`**  
    Após finalizar, crie um Pull Request da branch `feature/*` para `develop` (via GitHub ou GitLab).  
    O merge será feito após revisão e aprovação.
-   
+
    ---
 4. **Enviar para `homolog`**  
    Quando a `develop` estiver com múltiplas features testadas:

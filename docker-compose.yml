@@ -8,21 +8,27 @@ services:
       - "8080:80"
     volumes:
       - ./src:/var/www/html
+      - ./database:/var/www/html/database
     networks:
       - app-network
     environment:
       DB_HOST: ${DB_HOST}
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
-      DB_PASS: ${DB_PASSWORD}
-    ### command:
+      DB_PASSWORD: ${DB_PASSWORD}
+      SEED_ROOT_EMAIL: ${SEED_ROOT_EMAIL:-presidente@dev.com}
+      SEED_ROOT_RA: ${SEED_ROOT_RA:-presidente.dev}
+      SEED_ROOT_PASSWORD: ${SEED_ROOT_PASSWORD}
+      SEED_DEV_PASSWORD: ${SEED_DEV_PASSWORD}
+    command: /bin/bash -c "echo 'ServerName localhost' >> /etc/apache2/apache2.conf && apache2-foreground"
+
   db:
+    # Use a tag alinhada ao data directory do volume; `latest` evita erro de downgrade entre recriações locais.
     image: mysql:latest
     container_name: typexhub-db
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
-      MYSQL_HOST: ${DB_HOST}
       MYSQL_DATABASE: ${DB_NAME}
       MYSQL_USER: ${DB_USER}
       MYSQL_PASSWORD: ${DB_PASSWORD}
@@ -42,6 +48,8 @@ services:
     environment:
       PMA_HOST: db
       PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: ${DB_ROOT_PASSWORD}
     networks:
       - app-network
 

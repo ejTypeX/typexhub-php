@@ -1,0 +1,10 @@
+name: Hello World Workflow
+
+on: [push]   # dispara sempre que você fizer push
+
+jobs:
+  say-hello:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Mostrar mensagem
+        run: echo "🚀 Workflow rodando com sucesso!"
