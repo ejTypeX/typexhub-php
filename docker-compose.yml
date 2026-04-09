@@ -12,7 +12,7 @@ services:
     networks:
       - app-network
     environment:
-      DB_HOST: ${DB_HOST}
+      DB_HOST: db
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
@@ -46,7 +46,7 @@ services:
     ports:
       - "8081:80"
     environment:
-      PMA_HOST: db
+      PMA_HOST: db                   # ✅ Correto
       PMA_PORT: 3306
       PMA_USER: root
       PMA_PASSWORD: ${DB_ROOT_PASSWORD}
