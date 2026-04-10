@@ -29,11 +29,62 @@ Este projeto oferece um ambiente completo e moderno para desenvolvimento em PHP,
 │       ├── header.php
 │       └── sidebar.php
 │   └── menu/
-│       ├── presidência/
+│       ├── rh/
+│       │   ├── rh.php
+│       │   ├── criarUsuario.php
+│       │   ├── listarUsuarios.php
+│       │   ├── controller/
+│       │   │   ├── criarAdvertencia.php
+│       │   │   ├── editarAdvertencia.php
+│       │   └── repository/
+│       │       ├── advertenciaRepository.php
+│       │       ├── membroRepository.php
+│       ├── presidencia/
+│       │   ├── presidencia.php
+│       │   ├── criarTask.php
+│       │   ├── listaTasks.php
+│       │   ├── controller/
+│       │   │   ├── criarTask.php
+│       │   │   ├── editarTask.php
+│       │   └── repository/
+│       │       ├── taskRepository.php
+│       │       └── reuniaoRepository.php
 │       ├── projetos/
+│       │   ├── projetos.php
+│       │   ├── projeto_detalhes.php
+│       │   ├── criarProjeto.php
+│       │   ├── controller/
+│       │   │   ├── criarProjeto.php
+│       │   │   ├── editarProjeto.php
+│       │   └── repository/
+│       │       ├── projetoRepository.php
+│       │       └── tarefaRepository.php
 │       └── ...
 └── ...
 ```
+
+## 🏗️ Arquitetura do Sistema
+
+O projeto segue um padrão arquitetural simples e organizado, separando responsabilidades em três camadas principais:
+
+### 📄 Front-end (Páginas PHP)
+- Arquivos na raiz de cada módulo (ex: `rh.php`, `criarUsuario.php`)
+- Responsáveis pela interface do usuário e apresentação
+- Contêm formulários HTML, exibição de dados e interações básicas
+
+### 🎯 Controllers
+- Localizados em `controller/` dentro de cada módulo
+- Lidam com a lógica de negócio e processamento de requisições
+- Validam dados de entrada, processam formulários e coordenam operações
+- Chamam os repositories para acessar o banco de dados
+
+### 🗄️ Repositories
+- Localizados em `repository/` dentro de cada módulo
+- Encapsulam todo o acesso ao banco de dados
+- Contêm queries SQL, métodos CRUD (Create, Read, Update, Delete)
+- Fornecem uma interface limpa para os controllers acessarem dados
+
+Essa separação facilita a manutenção, teste e escalabilidade do código.
 
 ## ▶️ Como rodar o projeto
 
