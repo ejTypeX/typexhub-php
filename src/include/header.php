@@ -1,3 +1,14 @@
+<?php
+$currentFile = $_SERVER['PHP_SELF'];
+$basePath = '';
+
+if (strpos($currentFile, '/menu/') !== false || strpos($currentFile, '/auth/') !== false) {
+    $depth = substr_count(parse_url($currentFile, PHP_URL_PATH), '/') - 1;
+    $basePath = str_repeat('../', $depth);
+} else {
+    $basePath = '';
+}
+?>
 <!DOCTYPE html>
 <html lang="PT-BR">
 

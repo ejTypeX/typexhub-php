@@ -116,15 +116,10 @@ function getNextBatchNumber($pdo) {
     return $stmt->fetch(PDO::FETCH_ASSOC)['next_batch'];
 }
 
-/**
- * ✅ PARSER SQL CORRIGIDO - Resolve o problema principal
- */
 function parseSqlStatements($sql) {
-    // Remove comentários SQL (-- e /* */)
     $sql = preg_replace('/--.*$/m', '', $sql);
     $sql = preg_replace('/\/\*.*?\*\//s', '', $sql);
     
-    // Divide por ; mas ignora ; dentro de strings
     $statements = [];
     $current = '';
     $inString = false;

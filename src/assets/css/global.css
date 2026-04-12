@@ -7,7 +7,7 @@
     align-items: center;
     justify-content: center;
     margin: 5%;
-    background-color: greenyellow;
+    background-color: rgb(30, 30, 30);
     width: 90%;
     height: 90%;
     gap: 5vh;
@@ -33,6 +33,64 @@
     justify-items: center;
 }
 
+/*CSS das metas*/
+.container_metas {
+    width: 100%;
+    display: grid;
+    justify-items: center;
+    grid-template-columns: 1fr 1fr;
+    padding: 20px 0;
+}
+
+.card_metas {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: #454545;
+    border: 1px solid #E6E6E6;
+    border-radius: 12px;
+    max-width: 500px;
+    min-height: 200px;
+    width: 350px;
+    padding: 24px 24px 15px 24px;
+}
+
+.metas_status {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.metas_info {
+    display: flex;
+    flex-direction: column;
+    flex: 3;
+    align-content: space-between;
+}
+
+.meta_titulo {
+    font-size: 22px;
+}
+
+.meta_descricao {
+    word-break: break-word;
+    font-size: 16px;
+    color: rgb(201, 201, 201);
+}
+
+.meta_avatar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    white-space: nowrap;
+}
+
+.meta_user {
+    display: flex;
+    gap: 10px;
+}
+
 .section h1 {
     font-family: 'Inter';
     font-style: normal;
@@ -43,11 +101,13 @@
     color: #FFFFFF;
     margin: 0 0 2vh 0;
 }
+
 .header_section {
     display: flex;
     align-items: center;
     vertical-align: middle;
 }
+
 /* CARD - Estrutura principal com flexbox */
 .card {
     display: flex;
@@ -556,4 +616,12 @@
         padding: 1vw 2.5vh;
         font-size: 18px;
     }
+}
+
+#tasksTableBody tr:nth-child(n+4) {
+    display: none;
+}
+
+#tasksTableBody.expanded tr {
+    display: table-row;
 }

@@ -86,6 +86,41 @@ docker exec -it typexhub php database/migrate.php status
 ./dev-sync.sh nova
 ```
 
+### 🌱 Seeder de desenvolvimento
+
+Após aplicar **todas** as migrations, popule departamentos, papéis e usuários de teste (idempotente — pode rodar várias vezes):
+
+1. Defina no `.env` (na raiz do projeto), **sem commitar credenciais reais**:
+
+   - `SEED_ROOT_PASSWORD` — senha do usuário root de desenvolvimento (papel **presidente**, `usr_senha_temporaria = 0`).
+   - `SEED_DEV_PASSWORD` — senha compartilhada dos demais usuários seedados.
+   - Opcional: `SEED_ROOT_EMAIL`, `SEED_ROOT_RA` (padrões: `presidente@dev.com`, `presidente.dev`).
+
+2. Com Docker:
+
+   ```bash
+   docker exec -it typexhub php database/seed_dev.php
+   ```
+
+   Localmente (PHP na máquina, mesmo `.env`):
+
+   ```bash
+   php database/seed_dev.php
+   ```
+
+O script usa `password_hash()` (mesmo algoritmo padrão do PHP que o login com `password_verify`) e imprime no terminal o que foi **inserido** ou **ignorado** (já existia).
+
+Inclui ainda **tarefas simuladas** na tabela legada `tasks` (migration 001): cria diretorias `[DEV] …`, usuários legados (`legacy.*@dev.local`), o projeto `[DEV] Projeto TypeX Hub` e várias tasks com títulos prefixados `[DEV]` (idempotentes por título).
+
+**Rodar migrations + seed em sequência (Docker):**
+
+```bash
+docker exec -it typexhub php database/migrate.php
+docker exec -it typexhub php database/seed_dev.php
+```
+
+(Defina `SEED_ROOT_PASSWORD` e `SEED_DEV_PASSWORD` no `.env` na raiz para o container receber as variáveis após `docker compose up`.)
+
 ### 🔄 Workflow de Desenvolvimento (Híbrido)
 
 **Mais prático:** Desenvolva no phpMyAdmin + Migrations para versionamento
