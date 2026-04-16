@@ -33,15 +33,15 @@
         $celular = trim($_POST['membro_celular'] ?? '');
         $endereco = trim($_POST['membro_endereco'] ?? '');
 
-        if($nome === ''){
+        if(!isset($_POST['nome'] || empty($_POST['nome']))){
             throw new Exception("Nome é obrigatório");
         }
 
-        if($cpf === ''){
+        if(!isset($_POST['cpf'] || empty($_POST['cpf']))){
             throw new Exception("Documento é obrigatório");
         }
 
-        if($rg === ''){
+        if(!isset($_POST['rg'] || empty($_POST['rg']))){
             throw new Exception("RG é obrigatório");
         }
 
@@ -49,18 +49,26 @@
             throw new Exception("Email inválido");
         }
 
-        if($dataNascimento === ''){
+        if(!isset($_POST['dataNascimento'] || empty($_POST['dataNascimento']))){
             throw new Exception("Data de Nascimento é obrigatório");
         }
 
-        if($habilidade === ''){
+        if($!isset($_POST['habilidade'] || empty($_POST['habilidade']))){
             throw new Exception("Habilidade é obrigatória");
         }
 
-        if($ra === ''){
+        if(!isset($_POST['ra'] || empty($_POST['ra']))){
             throw new Exception("RA é obrigatório");
         }
 
+        // inserido a obrigatoriedade de cargo e de departamento
+
+        if (!isset($_POST['cargo']) || empty($_POST['cargo'])) {
+        throw new Exception("É obrigatório a inclusão de um cargo");
+        }
+
+        
+        
         $membro = new stdClass();
         $membro->nome = $nome;
         $membro->cpf = $cpf;
@@ -75,7 +83,8 @@
         $membro->admissao = $admissao ?: null;
         $membro->ra = $ra;
         $membro->periodo = $periodo ?: null;
-        $membro->cargo = $cargo ?: null;
+        // removido a possibilidade do cargo ser null
+        $membro->cargo = $cargo;
         $membro->area = $area ?: null;
         $membro->coeficiente = $coeficiente ?: null;
         $membro->celular = $celular ?: null;

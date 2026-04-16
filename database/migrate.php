@@ -1,5 +1,5 @@
 <?php
-$envPath = '.env';
+$envPath = __DIR__ . '/../.env';
 if (file_exists($envPath) && is_readable($envPath)) {
     $vars = @parse_ini_file($envPath, false, INI_SCANNER_RAW);
     if ($vars !== false && is_array($vars)) {
