@@ -1,0 +1,68 @@
+* {
+    font-family: serif;
+}
+
+body {
+    background-color: #393d46;
+}
+
+.fin_title {
+    padding-left: 125px;
+}
+
+.fin_h1_title {
+    color: #f1f1f1;
+    font-size: 30px;
+    font-weight: 700;
+}
+
+.fin_h2_title {
+    color: #ababab;
+    font-size: 16px;
+    font-weight: 400;
+    padding-top: 10px;
+    padding-bottom: 35px;
+}
+
+.fin_p_entradas, .fin_p_saidas, .fin_p_saldo {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.fin_p_entradas {
+    color: #00c951;
+}
+
+.fin_p_saidas {
+    color: #fb2b37;
+}
+
+.fin_p_saldo {
+    color: #00adb4;
+}
+
+.fin_resultados {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+}
+
+.fin_h2_entradas, .fin_h2_saidas, .fin_h2_saldo {
+    padding-top: 20px;
+    color: #7f8184;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.fin_card_entradas, .fin_card_saidas, .fin_card_saldo {
+    border: 2px solid transparent;
+    border-radius: 15px;
+    background-color: #1e1e1e;
+    padding-left: 20px;
+    width: 400px;
+}
+
+.fin_p_entradas, .fin_p_saidas, .fin_p_saldo {
+    padding-top: 40px;
+    padding-bottom: 20px;
+}

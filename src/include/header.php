@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="../../assets/css/global.css">
     <link rel="stylesheet" href="../../assets/css/header.css">
     <link rel="stylesheet" href="../../assets/css/sidebar.css">
+    <link rel="stylesheet" href="../../assets/css/financas.css">
     <!-- Style Sessão Projetos -->
     <link rel="stylesheet" href="../../assets/css/projetos.css">
     <!-- Bootstrap Icons -->
