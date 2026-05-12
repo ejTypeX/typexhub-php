@@ -1,0 +1,218 @@
+* {
+    font-family: serif;
+}
+
+body {
+    background-color: #393d46;
+}
+
+/* Parte dos totalizadores */
+.fin_totais_container {
+    max-width: 1250px;
+    margin: 0 auto;
+}
+
+.fin_title {
+    padding-top: 50px;
+    text-align: left;
+}
+
+.fin_h1_title {
+    color: #f1f1f1;
+    font-size: 30px;
+    font-weight: 700;
+}
+
+.fin_h2_title {
+    color: #ababab;
+    font-size: 16px;
+    font-weight: 400;
+    padding-top: 10px;
+    padding-bottom: 35px;
+}
+
+.fin_p_entradas, .fin_p_saidas, .fin_p_saldo {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.fin_p_entradas {
+    color: #00c951;
+}
+
+.fin_p_saidas {
+    color: #fb2b37;
+}
+
+.fin_p_saldo {
+    color: #00adb4;
+}
+
+.fin_resultados {
+    display: flex;
+    justify-content: flex-start;
+    gap: 30px;
+}
+
+.fin_h2_entradas, .fin_h2_saidas, .fin_h2_saldo {
+    padding-top: 20px;
+    color: #7f8184;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.fin_card_entradas, .fin_card_saidas, .fin_card_saldo {
+    border: 2px solid transparent;
+    border-radius: 15px;
+    background-color: #1e1e1e;
+    padding-left: 20px;
+    width: 400px;
+    flex: 1;
+}
+
+.fin_p_entradas, .fin_p_saidas, .fin_p_saldo {
+    padding-top: 40px;
+    padding-bottom: 20px;
+}
+
+/* Parte das Movimentações */
+.fin_movimentacoes_container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.fin_movimentacoes {
+    display: flex;
+    justify-content: center;
+    padding-top: 50px;
+}
+
+.fin_movimentacoes_container {
+    width: 1275px;
+    background-color: #1e1e1e;
+    border-radius: 15px;
+    padding: 25px;
+}
+
+.fin_h1_movimentacoes {
+    color: #f1f1f1;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 30px;
+}
+
+.fin_card_mov {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #2a2a2a;
+    padding: 20px;
+    border-radius: 12px;
+    margin-top: 10px;
+}
+
+.fin_h2_mov_nome {
+    color: #f1f1f1;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.fin_p_mov_data {
+    color: #ababab;
+    font-size: 14px;
+    font-weight: 400px;
+    padding-top: 5px;
+}
+
+.fin_valor_mov {
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: 500;
+    font-size: 12px;
+    color: #121212;
+}
+
+.fin_entrada_bg {
+    background-color: #00a63d;
+}
+
+.fin_saida_bg {
+    background-color: #e7000b;
+}
+
+.fin_empty_state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.fin_empty_text {
+    color: #f1f1f1;
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.fin_empty_subtext {
+    color: #ababab;
+    font-size: 14px;
+    margin-top: 8px;
+}
+
+.fin_movimentacoes_container {
+    min-height: 200px;
+}
+
+.fin_header_mov {
+    display: flex;                 
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 0 10px;
+}
+
+.fin_h1_movimentacoes {
+    margin: 0;
+}
+
+.fin_paginacao {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.fin_paginacao {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.fin_paginacao button {
+    background-color: #2a2a2a;
+    color: #f1f1f1;
+    border: 1px solid #444;
+    padding: 5px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.fin_paginacao button:hover:not(:disabled) {
+    background-color: #00adb4;
+    border-color: #00adb4;
+}
+
+.fin_paginacao button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    filter: grayscale(1);
+}
+
+#num-pagina {
+    color: #ababab;
+    font-size: 14px;
+    font-weight: 500;
+}
